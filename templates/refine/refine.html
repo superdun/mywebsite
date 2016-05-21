@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+<link href="{{url_for('static', filename='demos/refine/style.css')}}" rel="stylesheet" type="text/css">
+
+
+</head>
+<body>
+<div id="input" style="	background-image: url({{url_for('static', filename='demos/refine/img/tower.png')}});">
+    <div id="inputf">
+        <table>
+            <tr><td>F:</td><td><input type="number" id="F"></td></tr>
+            <tr><td>xF:</td><td><input type="number" id="xF"></td></tr>
+        </table>
+    </div>
+
+    <div id="inputd">
+        <table>
+            <tr><td>D:</td><td><input type="number" id="D"></td><td>轻组分回收率:</td><td><input type="number" id="faia"></td></tr>
+            <tr><td>xD:</td><td><input type="number" id="xD"></td><td>采出率:</td><td><input type="number" id="caichulv"></td></tr>
+        </table>
+    </div>
+
+    <div id="inputw">
+        <table>
+            <tr><td>W:</td><td><input type="number" id="W"></td></tr>
+            <tr><td>xW:</td><td><input type="number" id="xW"></td></tr>
+            <tr><td>重组分回收率:</td><td><input type="number" id="faib"></td></tr>
+        </table>
+    </div>
+
+    <div id="inputl">
+        <table>
+            <tr><td><div align="right">L:</div></td><td><input type="number" id="L"></td></tr>
+            <tr><td>精馏液气比:</td><td><input type="number" id="jlyqb"></td></tr>
+        </table>
+    </div>
+
+    <div id="inputv">
+        <table>
+            <tr><td>V:</td><td><input type="number" id="V"></td></tr>
+        </table>
+    </div>
+
+    <div id="inputl2">
+        <table>
+            <tr><td width="94"><div align="right">L':</div></td><td width="54"><input type="number" id="L2"></td></tr>
+            <tr><td>提馏液气比:</td><td><input type="number" id="tlyqb"></td></tr>
+        </table>
+    </div>
+    <div id="inputv2">
+        <table>
+            <tr><td>V':</td><td><input type="number" id="V2"></td></tr></table>
+    </div>
+    <div id="inputr">
+        <table>
+            <tr><td>R:</td><td><input type="number" id="R"></td></tr>
+        </table>
+    </div>
+
+    <div id="inputq">
+        <table>
+            <tr><td><div align="right">q:</div></td><td><input type="number" id="q" onchange="cauculate.q2()"></td></tr>
+            <tr><td>进料状态:</td><td><select id="condition" onchange="cauculate.q1()"><option id="饱和蒸汽">饱和蒸汽</option><option id="气液混合物">气液混合物</option><option id="泡点进料">泡点进料</option><option id="冷液进料">冷液进料</option><option id="过热蒸汽进料">过热蒸汽进料</option></select></td></tr>
+        	<tr><td><div align="right">相对挥发度:</div></td><td><input type="number" id="alpha"></td></tr>
+        </table>
+    </div>
+    <div id="other">
+        <table>
+            <tr><td>相平衡方程:</td><td><input type="text" id="xphline" class="line"></td><td>q线方程:</td><td><input type="text" id="qline" class="line"></td></tr>
+            <tr><td>提馏线方程:</td><td><input type="text" id="tlline" class="line"></td><td>精馏线方程:</td><td><input type="text" id="jlline" class="line"></td></tr>
+        </table>
+    </div>
+    <div id="rmin">
+    	 <table>
+            <tr><td><div align="right">Rmin:</div></td><td><input type="number" id="Rmini"></td></tr>
+             <tr><td><div align="right">q线与相平衡线交点坐标:</div></td><td><input type="text" id="qaxy"></td></tr>
+         </table>
+
+    </div>
+
+    <input type="button" id="GO" value="计算!" onclick="cauculate.start()">
+
+</div>
+    <input type="button" id="IMG" value="图像" onclick="draw.open()">
+<div id="inform"><p>化工原理计算工具之</p><p>精馏篇</p><p>应用范围：精馏设计计算</p><p>输入数据类型与数量不限，具体取决于题设条件，请勿输入矛盾数据</p><p>可生成图像，可数出理论板数，生成图像前请先点击计算，让程序获得足够数据</p><p>已知问题：理论上支持
+    图像线条颜色（莫名其妙的bug）；小数位保留问题（js的奇怪float）；一些功能还没有来得及写，例如板效率计算；</p><p>以上问题会在下一版本中尽量完善，谢谢支持！</p><p>By：盾；QQ||Email：475098936</p><p>ver:0.001</p><input type="button" onclick="cauculate.open()"  value="少废话，让我们开始吧！" id="open"> </div>
+<div id="canvas"><input type="button" value="关闭" onclick="draw.close()"><canvas width="500" height="500" id="pic"></canvas>
+</div>
+</body>
+<script src="{{url_for('static', filename='js/jquery-1.12.3.min.js')}}"></script>
+<script> {% include 'refine/cauculate.js' %}</script>
+<script> {% include 'refine/canvas.js' %}</script>
+</html>

@@ -1,0 +1,33 @@
+﻿{% extends "base.html" %} 
+{% block content %}
+{% endblock %} 
+{% block script %}
+var goalname=''<!-- 全局变量获取内容的题目，以供模板form,ajax使用 -->
+$('#show_works').addClass('active')
+$.getJSON( '/container_ajax', {source:'show_works'}, function(data) {
+		console.log(data.introduction)
+		var pics=data.pics
+		var heads=data.heads
+		var introduction=data.introduction
+		var num=pics.length
+		var count=0
+		for (var i=0;i<num;i++) {
+			if(count%3==0){
+				$('#content').append("<div></div>")
+				$('#content div:last').addClass('row')
+				count=0
+			}
+		$('#content .row:last').append('<div></div>')
+		$('#content .row:last div:last').addClass('col-md-4').css('text-align','center').css('margin-bottom','25px').append('<img>')
+		$('#content .row:last div:last img').addClass('img-thumbnail').attr({width:"160",height:"160",src:pics[i]})
+		$('#content .row:last div:last').append('<h2></h2>')	
+		$('#content .row:last div:last h2').text(heads[i])
+		$('#content .row:last div:last').append('<p></p>')
+		$('#content .row:last div:last p:last').text(introduction[i])
+		count++
+		}
+		{% include 'form.js' %}
+
+})
+{% include 'ajax.js' %}
+{% endblock %}

@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mary Sue Name</title>
+
+<style>
+    #css3{background:url({{url_for('static', filename='demos/marysue/desk.jpg')}}) no-repeat center top;background-size:cover}
+</style>
+</head>
+<body>
+<div>
+<table id="css3">
+<tr>
+<td>姓什么：</td>
+<td><input id="xing" type="text" autofocus></td>
+</tr>
+
+<tr>
+<td>叫什么：</td>
+<td><input id="ming" type="text">
+</td>
+</tr>
+
+<tr>
+<td>选择性别：</td>
+<td>
+<select id="xingbie">
+<option value="male">汉子</option>
+<option value="female">妹纸</option>
+<option value="nomatter">都行</option>
+</select>
+</td>
+</tr>
+
+<tr>
+<td>生成长度：</td>
+<td><input id="length" type="range" min="3" max="7">
+</td><td><div id="shuzi"></div></td>
+</tr>
+<td></td>
+<td><input id="qiming" type="button" value="开始起名！" onClick="start()"></td>
+</table>
+<hr>
+<table><tr id="tr1"></tr>
+<tr id="tr2"></tr>
+</table>
+</div>
+</body>
+<script>{% include 'marysue/mary.js' %}</script>
+</html>

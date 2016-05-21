@@ -1,0 +1,178 @@
+@charset "utf-8";
+/* CSS Document */
+#input {
+	position: absolute;
+	height: 1280px;
+	width: 720px;
+	background-repeat: no-repeat;
+	top: 3px;
+	left: 3px;
+}
+#inform {
+	position: absolute;
+	height: 1280px;
+	width: 720px;
+	background-color: bisque;
+	top: 3px;
+	left: 3px;
+	text-align: center;
+	font-family: "Comic Sans MS", cursive;
+	font-size: 24px;
+	font-style: oblique;
+}
+#inputf {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	position: absolute;
+	left: 12px;
+	top: 479px;
+	width: 105px;
+	height: 124px;
+	text-align: center;
+	font-size: 18px;
+}
+#inputd {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	position: absolute;
+	left: 25px;
+	top: 179px;
+	width: 230px;
+	height: 128px;
+	text-align: center;
+	font-size: 18px;
+}
+#open {
+	height: 100px;
+	width: 205px;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 18px;
+	background-color: #C36;
+	color: #FFF;
+	font-weight: bolder;
+}
+#inputw {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	position: absolute;
+	left: 157px;
+	top: 999px;
+	width: 141px;
+	height: 127px;
+	text-align: center;
+	font-size: 18px;
+}
+#canvas {
+	position: absolute;
+	left: 111px;
+	top: 73px;
+	background-color: beige;
+}
+
+
+#inputr {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	position: absolute;
+	left: 336px;
+	top: 196px;
+	width: 96px;
+	height: 88px;
+	text-align: center;
+	font-size: 18px;
+}
+#inputq {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	position: absolute;
+	left: 23px;
+	top: 623px;
+	width: 215px;
+	height: 88px;
+	text-align: center;
+	font-size: 18px;
+}
+.line {
+	height: 30px;
+	width: 150px;
+	font-size: 14px;
+}
+
+
+
+#inputl {
+	position: absolute;
+	left: 390px;
+	top: 374px;
+	font-size: 18px;
+	width: 147px;
+}
+#inputv {
+	position: absolute;
+	left: 136px;
+	top: 417px;
+	font-size: 18px;
+}
+#inputl2 {
+	position: absolute;
+	left: 389px;
+	top: 747px;
+	font-size: 18px;
+	width: 148px;
+}
+
+#inputv2 {
+	position: absolute;
+	left: 124px;
+	top: 827px;
+	font-size: 18px;
+}
+#IMG {
+	position: absolute;
+	left: 144px;
+	top: 547px;
+	font-family: "Comic Sans MS", cursive;
+}
+
+
+
+
+input {
+	height: 40px;
+	width: 70px;
+	font-size: 16px;
+	border-top-style: groove;
+	border-right-style: groove;
+	border-bottom-style: 18;
+	border-left-style: groove;
+	font-family: "Comic Sans MS", cursive;
+}
+#other {
+	position: absolute;
+	height: 93px;
+	left: 41px;
+	top: 49px;
+}
+#GO {
+	position: absolute;
+	left: 144px;
+	top: 483px;
+}
+#rmin {
+	font-size: 18px;
+	position: absolute;
+	left: 507px;
+	top: 192px;
+	width: 114px;
+	height: 82px;
+}
