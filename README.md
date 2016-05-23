@@ -14,9 +14,12 @@ python2.7的flask框架，Jinjia2模板.<br><br>
 
 *维护信息：在static/相应文件夹，将信息图片（jpg）与信息文本（txt）命以相同文件名，信息文本中第一行输入标题，其余为内容。即可实现网站内容更新（AJAX）  
   
-*报名/预约：服务器会自动将报名信息发送至设定好的管理员邮箱  
+*报名/预约：服务器会自动将报名信息发送至设定好的管理员邮箱 
+
+##私货
+私货下拉菜单包含我以前写的html游戏和一个点击会旋转的二维码
   
-##效果图片   
+##网站效果图片   
 ![mahua](https://github.com/superdun/mywebsite/raw/master/exp_pics/1.jpg)
 ![mahua](https://github.com/superdun/mywebsite/raw/master/exp_pics/2.jpg)
 ![mahua](https://github.com/superdun/mywebsite/raw/master/exp_pics/3.jpg)
