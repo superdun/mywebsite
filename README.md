@@ -16,5 +16,7 @@ python2.7的flask框架，Jinjia2模板.<br><br>
   
 *报名/预约：服务器会自动将报名信息发送至设定好的管理员邮箱  
   
-    
+##效果图片   
 ![mahua](https://github.com/superdun/mywebsite/raw/master/exp_pics/1.jpg)
+![mahua](https://github.com/superdun/mywebsite/raw/master/exp_pics/2.jpg)
+![mahua](https://github.com/superdun/mywebsite/raw/master/exp_pics/3.jpg)
