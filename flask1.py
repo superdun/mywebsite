@@ -3,9 +3,31 @@
 from flask import Flask,render_template ,url_for,jsonify,request
 from flask.ext.mail import Mail ,Message
 from flask.ext.bootstrap import Bootstrap 
+from flask.ext.admin import Admin, BaseView, expose
+from flask.ext.admin.contrib.sqla import ModelView
+from wtforms import Form as wtForm
+from dbORM import db,User,Post
+from wtforms import TextAreaField
+from wtforms.widgets import TextArea
+
+from flask_admin import form
+from flask_admin.form import rules
 import os
-app = Flask(__name__)
+
+
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object('config')
+app.config.from_pyfile('localConfig.py')
+
 bootstrap = Bootstrap(app)
+admin = Admin(app)
+
+
+
+
+
+
+
 def mail(goal,text):
 	app.config['MAIL_SERVER'] = 'smtp.163.com'
 	app.config['MAIL_PORT'] = 465
@@ -104,7 +126,52 @@ def joinin():#ajax....
 		return jsonify(status='OK',result=u'欢迎你!!  '+request.args.get('name')+u'  你的信息已经提交，我们会尽快联系你')
 	else:
 		return jsonify(status='NO',result=u'请正确完整输入个人信息！')
-		
+
+#admin	
+
+
+class CKTextAreaWidget(TextArea):
+    def __call__(self, field, **kwargs):
+        if kwargs.get('class'):
+            kwargs['class'] += ' ckeditor'
+        else:
+            kwargs.setdefault('class', 'ckeditor')
+        return super(CKTextAreaWidget, self).__call__(field, **kwargs)
+
+class CKTextAreaField(TextAreaField):
+    widget = CKTextAreaWidget()
+
+
+
+
+class PostView(ModelView):
+
+
+    # Override displayed fields
+    column_list = ("title", "create_at", "view_count", "category", "book_count", "max_book_count")
+
+    form_overrides = {
+        'content': CKTextAreaField
+    }
+    form_extra_fields = {
+        'img': form.ImageUploadField('Image',base_path='static/upload')
+    }
+    form_columns = ("title", "summary", "category",  "max_book_count", "content", "img")
+    form_excluded_columns = ('create_at')
+    create_template = 'admin/post/edit.html'
+    edit_template = 'admin/post/edit.html'
+
+
+    def __init__(self, session, **kwargs):
+        # You can pass name and other parameters if you want to
+        super(PostView, self).__init__(Post, session, **kwargs)
+
+
+admin.add_view(ModelView(User, db.session))
+admin.add_view(PostView(db.session))
+
+
+
 
 if __name__ == '__main__':
-	app.run(port=8080,debug=True)
+	app.run(port=8081,debug=True)
