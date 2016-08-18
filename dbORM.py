@@ -48,3 +48,16 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<post %r>' % self.title
+class Carousel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    img = db.Column(db.String(80))
+    title = db.Column(db.String(120))
+    content = db.Column(db.String(120))
+
+    def __init__(self, img='', title=1, content=''):
+        self.img = img
+        self.title = title
+        self.content = content
+
+    def __repr__(self):
+        return '<Carousel %r>' % self.title

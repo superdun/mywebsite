@@ -6,13 +6,16 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.admin import Admin, BaseView, expose
 from flask.ext.admin.contrib.sqla import ModelView
 from wtforms import Form as wtForm
-from dbORM import db,User,Post
+from dbORM import db,User,Post,Carousel
 from wtforms import TextAreaField
 from wtforms.widgets import TextArea
-
+import thumb
+from flask_qiniustorage import Qiniu
 from flask_admin import form
 from flask_admin.form import rules
 import os
+import os.path as op
+
 
 
 app = Flask(__name__, instance_relative_config=True)
@@ -21,6 +24,7 @@ app.config.from_pyfile('localConfig.py')
 
 bootstrap = Bootstrap(app)
 admin = Admin(app)
+qiniu_store = Qiniu(app)
 
 
 
@@ -142,7 +146,18 @@ class CKTextAreaField(TextAreaField):
     widget = CKTextAreaWidget()
 
 
+class ImageUpload(form.ImageUploadField):
+    def _save_file(self, data, filename):
+        path = self._get_path(filename)
+        if not op.exists(op.dirname(path)):
+            os.makedirs(os.path.dirname(path), self.permission | 0o111)
 
+        data.seek(0)
+        data.save(path)
+        with open(path, 'rb') as fp:
+            ret, info = qiniu_store.save(fp, filename)
+            print ret
+        return filename
 
 class PostView(ModelView):
 
@@ -154,21 +169,34 @@ class PostView(ModelView):
         'content': CKTextAreaField
     }
     form_extra_fields = {
-        'img': form.ImageUploadField('Image',base_path='static/upload')
+        'img': ImageUpload('Image',base_path='static/upload',relative_path = thumb.relativePath())
     }
     form_columns = ("title", "summary", "category",  "max_book_count", "content", "img")
     form_excluded_columns = ('create_at')
-    create_template = 'admin/post/edit.html'
+    create_template = 'admin/post/create.html'
     edit_template = 'admin/post/edit.html'
 
 
-    def __init__(self, session, **kwargs):
-        # You can pass name and other parameters if you want to
-        super(PostView, self).__init__(Post, session, **kwargs)
+class CarouselView(ModelView):
+
+    form_extra_fields = {
+        'img': form.ImageUploadField('Image',base_path='static/upload')
+    }
+
 
 
 admin.add_view(ModelView(User, db.session))
-admin.add_view(PostView(db.session))
+admin.add_view(PostView(Post,db.session))
+admin.add_view(CarouselView(Carousel,db.session))
+
+
+
+
+
+class ImgUpload(object):
+	def __init__(self,name):
+		self.name = name
+
 
 
 
