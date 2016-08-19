@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Flask,render_template ,url_for,jsonify,request
+from flask import Flask,render_template ,url_for,jsonify,request,Response
 from flask.ext.mail import Mail ,Message
 from flask.ext.bootstrap import Bootstrap 
 from flask.ext.admin import Admin, BaseView, expose
@@ -18,6 +18,8 @@ import os.path as op
 
 
 
+
+
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
 app.config.from_pyfile('localConfig.py')
@@ -26,8 +28,8 @@ bootstrap = Bootstrap(app)
 admin = Admin(app)
 qiniu_store = Qiniu(app)
 
-
-
+UPLOAD_URL=app.config.get('UPLOAD_URL', '')
+QINIU_DOMAIN = app.config.get('QINIU_BUCKET_DOMAIN', '')
 
 
 
@@ -131,6 +133,12 @@ def joinin():#ajax....
 	else:
 		return jsonify(status='NO',result=u'请正确完整输入个人信息！')
 
+@app.route('/admin/upload',methods = ['POST'])
+def upload():
+    file = request.files.to_dict()['files[]']
+    result = thumb.upload_file(file,UPLOAD_URL,QINIU_DOMAIN,qiniu_store)	
+    return jsonify(result)
+
 #admin	
 
 
@@ -156,8 +164,10 @@ class ImageUpload(form.ImageUploadField):
         data.save(path)
         with open(path, 'rb') as fp:
             ret, info = qiniu_store.save(fp, filename)
-            print ret
-        return filename
+            if '200' in ret :
+                os.remove(path)
+                return filename
+            raise Exception("upload to qiniu failed", ret)
 
 class PostView(ModelView):
 
@@ -169,20 +179,24 @@ class PostView(ModelView):
         'content': CKTextAreaField
     }
     form_extra_fields = {
-        'img': ImageUpload('Image',base_path='static/upload',relative_path = thumb.relativePath())
+        'img': ImageUpload('Image',base_path=UPLOAD_URL,relative_path = thumb.relativePath())
     }
     form_columns = ("title", "summary", "category",  "max_book_count", "content", "img")
     form_excluded_columns = ('create_at')
     create_template = 'admin/post/create.html'
     edit_template = 'admin/post/edit.html'
+    @expose('/upload')
+    def test(self):
+        return self.render('admin/test.html')
+
+
 
 
 class CarouselView(ModelView):
 
     form_extra_fields = {
-        'img': form.ImageUploadField('Image',base_path='static/upload')
+        'img': form.ImageUploadField('Image',base_path=UPLOAD_URL)
     }
-
 
 
 admin.add_view(ModelView(User, db.session))
@@ -192,10 +206,6 @@ admin.add_view(CarouselView(Carousel,db.session))
 
 
 
-
-class ImgUpload(object):
-	def __init__(self,name):
-		self.name = name
 
 
 
