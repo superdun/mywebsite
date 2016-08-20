@@ -21,3 +21,6 @@
 	margin-bottom: 20px;
 	margin-left: 0px;
 }
+.carousel-inner > .item > img, .carousel-inner > .item > a > img {
+    width: 100%;
+}
