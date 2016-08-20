@@ -37,7 +37,7 @@ function __initHtmlEditorUploader__(uploader,editor) {
 			}
 			//console.log(files);
 		},
-		done : function (e, data) {alert()
+		done : function (e, data) {
 			//var editor = uploader.data('eva-ui');
 			var file = data.result;
 			console.log(data);

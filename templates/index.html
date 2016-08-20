@@ -8,33 +8,21 @@
         <li data-target="#myCarousel" data-slide-to="2" class=""></li>
       </ol>
       <div class="carousel-inner" role="listbox">
+      {% for carousel in carousels %}
+        {% if loop.index == 1%}
         <div class="item active">
-          <img  src="{{url_for('static', filename='carousel/1.jpg')}}" alt="First slide">
-          <div class="container">
-            <div class="carousel-caption">
-				<h1>自信</h1>
-				<p>3D打印机组装活动圆满完成！</p>
-            </div>
-          </div>
-        </div>
+        {% else %}
         <div class="item">
-          <img  src="{{url_for('static', filename='carousel/2.jpg')}}" alt="Second slide">
+        {% endif %}
+          <img  src="http://{{img_domain}}/{{carousel.img}}" >
           <div class="container">
             <div class="carousel-caption">
-				<h1>专注</h1>
-				<p>3D打印机组装活动圆满完成！</p>
+        <h1>{{carousel.title}}</h1>
+        <p>{{carousel.content}}</p>
             </div>
           </div>
         </div>
-        <div class="item">
-          <img  src="{{url_for('static', filename='carousel/3.jpg')}}" alt="Third slide">
-          <div class="container">
-            <div class="carousel-caption">
-				<h1>整体</h1>
-				<p>3D打印机组装活动圆满完成！</p>
-            </div>
-          </div>
-        </div>
+      {% endfor %}
       </div>
       <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
