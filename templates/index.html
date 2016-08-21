@@ -3,9 +3,13 @@
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
       <!-- Indicators -->
       <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1" class=""></li>
-        <li data-target="#myCarousel" data-slide-to="2" class=""></li>
+        {% for carousel in carousels %}
+          {% if loop.index0 == 0 %}
+          <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+          {% else %}
+          <li data-target="#myCarousel" data-slide-to="{{loop.index0}}" class=""></li>
+          {% endif %}
+        {% endfor %}
       </ol>
       <div class="carousel-inner" role="listbox">
       {% for carousel in carousels %}
@@ -14,7 +18,7 @@
         {% else %}
         <div class="item">
         {% endif %}
-          <img  src="http://{{img_domain}}/{{carousel.img}}" >
+          <img  src="http://{{img_domain}}/{{carousel.img}}{{thumbnail}}" >
           <div class="container">
             <div class="carousel-caption">
         <h1>{{carousel.title}}</h1>

@@ -1,33 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, url_for, jsonify, request, Response
-from flask.ext.mail import Mail, Message
-from flask.ext.bootstrap import Bootstrap
-from flask.ext.admin import Admin, BaseView, expose
-from flask.ext.admin.contrib.sqla import ModelView
-from wtforms import Form as wtForm
+from flask import Flask, render_template, url_for, jsonify, request, Response, redirect
+from flask_mail import Mail, Message
+from flask_bootstrap import Bootstrap
 from dbORM import db, User, Post, Carousel
-from wtforms import TextAreaField
-from wtforms.widgets import TextArea
 import thumb
-from flask_qiniustorage import Qiniu
-from flask_admin import form
-from flask_admin.form import rules
+from moduleGlobal import app, bootstrap, qiniu_store, QINIU_DOMAIN, CATEGORY, UPLOAD_URL
+import moduleAdmin as admin
+import flask_login
 import os
 import os.path as op
 
-
-app = Flask(__name__, instance_relative_config=True)
-app.config.from_object('config')
-app.config.from_pyfile('localConfig.py')
-
-bootstrap = Bootstrap(app)
-admin = Admin(app)
-qiniu_store = Qiniu(app)
-
-UPLOAD_URL = app.config.get('UPLOAD_URL', '')
-QINIU_DOMAIN = app.config.get('QINIU_BUCKET_DOMAIN', '')
-# db.create_all()
 
 
 def mail(goal, text):
@@ -66,30 +49,64 @@ def get_file_for_ajax(source_name):  # change the html's ajax arg sourse
 
 
 @app.route('/')
-def index(carousels=None,img_domain=QINIU_DOMAIN):
-
-    carousels =  Carousel.query.all()
-    return render_template('index.html',carousels=carousels,img_domain=img_domain)
+def index(carousels=None, img_domain=QINIU_DOMAIN, thumbnail=''):
+    carousels = Carousel.query.all()
+    thumbnail = app.config.get('CAROUSEL_THUMBNAIL')
+    return render_template('index.html', carousels=carousels, img_domain=img_domain, thumbnail=thumbnail)
 
 
 @app.route('/show_works')
-def show_works():
-    return render_template('show_works.html')
+def show_works(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
+    thumbnail = app.config.get('PREVIEW_THUMBNAIL')
+    print CATEGORY[0][0]
+    items = Post.query.filter_by(category=CATEGORY[0][0]).all()
+
+    return render_template('show_works.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
 @app.route('/apply')
-def apply():
-    return render_template('apply.html')
+def apply(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
+    thumbnail = app.config.get('PREVIEW_THUMBNAIL')
+    items = Post.query.filter_by(category=CATEGORY[1][0]).all()
+    return render_template('apply.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
 @app.route('/book_tools')
-def book_tools():
-    return render_template('book_tools.html')
+def book_tools(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
+    thumbnail = app.config.get('PREVIEW_THUMBNAIL')
+    items = Post.query.filter_by(category=CATEGORY[2][0]).all()
+    return render_template('book_tools.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
 @app.route('/our_cool')
-def our_cool():
-    return render_template('our_cool.html')
+def our_cool(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
+    thumbnail = app.config.get('PREVIEW_THUMBNAIL')
+    items = Post.query.filter_by(category=CATEGORY[3][0]).all()
+    return render_template('our_cool.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
+
+
+@app.route('/container_ajax')  # ajax
+def apply_ajax():
+    res = get_file_for_ajax(request.args.get('source'))
+    return jsonify(pics=res[0], heads=res[1], introduction=res[2])
+
+
+@app.route('/joinus')
+def joinin():  # ajax....
+    if request.args.get('name') and request.args.get('phone').isdigit():
+        text = request.args.get(
+            'name') + u'申请加入' + request.args.get('goal') + u'，电话:' + request.args.get('phone')
+        mail(request.args.get('goal'), text)
+        return jsonify(status='OK', result=u'欢迎你!!  ' + request.args.get('name') + u'  你的信息已经提交，我们会尽快联系你')
+    else:
+        return jsonify(status='NO', result=u'请正确完整输入个人信息！')
+
+
+@app.route('/admin/upload', methods=['POST'])
+def upload():
+    file = request.files.to_dict()['files[]']
+    result = thumb.upload_file(file, UPLOAD_URL, QINIU_DOMAIN, qiniu_store)
+    return jsonify(result)
 
 
 @app.route('/stationmaster')  # personal
@@ -135,96 +152,35 @@ def fiveson():
 @app.route('/mosquito')
 def mosquito():
     return render_template('mosquito/mosquito.html')
-
-
-@app.route('/container_ajax')  # ajax
-def apply_ajax():
-    res = get_file_for_ajax(request.args.get('source'))
-    return jsonify(pics=res[0], heads=res[1], introduction=res[2])
-
-
-@app.route('/joinus')
-def joinin():  # ajax....
-    if request.args.get('name') and request.args.get('phone').isdigit():
-        text = request.args.get(
-            'name') + u'申请加入' + request.args.get('goal') + u'，电话:' + request.args.get('phone')
-        mail(request.args.get('goal'), text)
-        return jsonify(status='OK', result=u'欢迎你!!  ' + request.args.get('name') + u'  你的信息已经提交，我们会尽快联系你')
-    else:
-        return jsonify(status='NO', result=u'请正确完整输入个人信息！')
-
-
-@app.route('/admin/upload', methods=['POST'])
-def upload():
-    file = request.files.to_dict()['files[]']
-    result = thumb.upload_file(file, UPLOAD_URL, QINIU_DOMAIN, qiniu_store)
-    return jsonify(result)
-
 # admin
+admin.dashboard()
+
+# login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+
+    username = request.form['username']
+    if request.form['password'] == users[username]['password']:
+        user = User()
+        user.id = username
+        flask_login.login_user(user)
+        return redirect(url_for('protected'))
+
+    return 'Bad login'
 
 
-class CKTextAreaWidget(TextArea):
-
-    def __call__(self, field, **kwargs):
-        if kwargs.get('class'):
-            kwargs['class'] += ' ckeditor'
-        else:
-            kwargs.setdefault('class', 'ckeditor')
-        return super(CKTextAreaWidget, self).__call__(field, **kwargs)
+@app.route('/protected')
+@flask_login.login_required
+def protected():
+    return 'Logged in as: ' + flask_login.current_user.id
 
 
-class CKTextAreaField(TextAreaField):
-    widget = CKTextAreaWidget()
-
-
-class ImageUpload(form.ImageUploadField):
-
-    def _save_file(self, data, filename):
-        path = self._get_path(filename)
-        if not op.exists(op.dirname(path)):
-            os.makedirs(os.path.dirname(path), self.permission | 0o111)
-
-        data.seek(0)
-        data.save(path)
-        with open(path, 'rb') as fp:
-            ret, info = qiniu_store.save(fp, filename)
-            if 200 != info.status_code:
-                raise Exception("upload to qiniu failed", ret)
-            # os.remove(path)
-            return filename
-
-
-class PostView(ModelView):
-
-    # Override displayed fields
-    column_list = ("title", "create_at", "view_count",
-                   "category", "book_count", "max_book_count")
-
-    form_overrides = {
-        'content': CKTextAreaField
-    }
-    form_extra_fields = {
-        'img': ImageUpload('Image', base_path=UPLOAD_URL, relative_path=thumb.relativePath())
-    }
-    form_columns = ("title", "summary", "category",
-                    "max_book_count", "content", "img")
-    form_excluded_columns = ('create_at')
-    create_template = 'admin/post/create.html'
-    edit_template = 'admin/post/edit.html'
-
-
-
-
-class CarouselView(ModelView):
-
-    form_extra_fields = {
-        'img': ImageUpload('Image', base_path=UPLOAD_URL, relative_path=thumb.relativePath())
-    }
-
-admin.add_view(ModelView(User, db.session))
-admin.add_view(PostView(Post, db.session))
-admin.add_view(CarouselView(Carousel, db.session))
-
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    return 'Logged out'
 
 if __name__ == '__main__':
     app.run(port=8081, debug=True)
