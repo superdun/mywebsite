@@ -33,8 +33,9 @@ class Post(db.Model):
     category = db.Column(db.String(120))
     book_count = db.Column(db.Integer)
     max_book_count = db.Column(db.Integer)
-
-    def __init__(self, title='', content='', img='', view_count=0, summary='', category='', book_count=0, max_book_count=0):
+    status = db.Column(db.String(120))
+    is_full = db.Column(db.String(120))
+    def __init__(self, title='', content='', img='', view_count=0, summary='', category='', book_count=0, max_book_count=0,status='',is_full='no'):
         self.title = title
         self.content = content
         self.create_at = time.time()
@@ -44,8 +45,8 @@ class Post(db.Model):
         self.category = category
         self.book_count = book_count
         self.max_book_count = max_book_count
-
-
+        self.status = status
+        self.is_full = is_full
     def __repr__(self):
         return '<post %r>' % self.title
 class Carousel(db.Model):

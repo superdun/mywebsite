@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, url_for, jsonify, request, Response, redirect
-from flask_mail import Mail, Message
+from  moduleMail import mail
 from flask_bootstrap import Bootstrap
 from dbORM import db, User, Post, Carousel
 import thumb
@@ -12,38 +12,6 @@ import os
 import os.path as op
 
 
-
-def mail(goal, text):
-    app.config['MAIL_SERVER'] = 'smtp.163.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USE_SSL'] = True
-    app.config['MAIL_USERNAME'] = 'ecust_maker@163.com'
-    app.config['MAIL_PASSWORD'] = 'ecustmaker1'
-    mail = Mail(app)
-    msg = Message(u'申请加入%s' % goal, sender='ecust_maker@163.com',
-                  recipients=['ecust_maker@163.com'])
-    msg.body = text
-    with app.app_context():
-        mail.send(msg)
-
-
-def get_file_for_ajax(source_name):  # change the html's ajax arg sourse
-    pics = []
-    heads = []
-    introduction = []
-    for root, dirs, files in os.walk(os.getcwd() + '/static/%s' % source_name):
-        for i in files:
-            if os.path.splitext(i)[1][1:] == 'jpg':
-                pics.append(url_for('static', filename='%s/%s' %
-                                    (source_name, i)))
-                txt = open(os.getcwd() + '/static/%s/%s.txt' %
-                           (source_name, os.path.splitext(i)[0]), 'rb')
-                lines = txt.readlines()
-                heads.append(lines[0].decode("gb2312").encode("utf-8"))
-                introduction.append(
-                    ''.join(lines[1:]).decode("gb2312").encode("utf-8"))
-                txt.close()
-    return [pics, heads, introduction]
 
     #
 
@@ -59,7 +27,7 @@ def index(carousels=None, img_domain=QINIU_DOMAIN, thumbnail=''):
 def show_works(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
     print CATEGORY[0][0]
-    items = Post.query.filter_by(category=CATEGORY[0][0]).all()
+    items = Post.query.filter_by(category=CATEGORY[0][0],status='published').all()
 
     return render_template('show_works.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
@@ -67,21 +35,21 @@ def show_works(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
 @app.route('/apply')
 def apply(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
-    items = Post.query.filter_by(category=CATEGORY[1][0]).all()
+    items = Post.query.filter_by(category=CATEGORY[1][0],status='published').all()
     return render_template('apply.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
 @app.route('/book_tools')
 def book_tools(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
-    items = Post.query.filter_by(category=CATEGORY[2][0]).all()
+    items = Post.query.filter_by(category=CATEGORY[2][0],status='published').all()
     return render_template('book_tools.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
 @app.route('/our_cool')
 def our_cool(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
-    items = Post.query.filter_by(category=CATEGORY[3][0]).all()
+    items = Post.query.filter_by(category=CATEGORY[3][0],status='published').all()
     return render_template('our_cool.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
@@ -156,9 +124,59 @@ def mosquito():
 admin.dashboard()
 
 # login
+
+
+
+login_manager = flask_login.LoginManager()
+
+login_manager.init_app(app)
+users= {}
+raw_users = User.query.all()
+for user in raw_users:
+	users[user.name]={'password':user.password}
+
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return 'Unauthorized'
+
+
+class User(flask_login.UserMixin):
+    pass
+
+
+@login_manager.user_loader
+def user_loader(username):
+    if username not in users:
+        return
+
+    user = User()
+    user.id = username
+    return user
+
+
+@login_manager.request_loader
+def request_loader(request):
+    email = request.form.get('username')
+    if email not in users:
+        return
+
+    user = User()
+    user.id = username
+
+    # DO NOT ever store passwords in plaintext and always compare password
+    # hashes using constant-time comparison!
+    user.is_authenticated = request.form[
+        'password'] == users[email]['password']
+
+    return user
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
+        if flask_login.current_user.is_authenticated:
+            return redirect('/admin')
         return render_template('login.html')
 
     username = request.form['username']
@@ -174,7 +192,7 @@ def login():
 @app.route('/protected')
 @flask_login.login_required
 def protected():
-    return 'Logged in as: ' + flask_login.current_user.id
+    return redirect('/admin')
 
 
 @app.route('/logout')

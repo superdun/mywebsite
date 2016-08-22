@@ -29,3 +29,8 @@
   </div>
 </form>
 {% endblock %}
+{% block script %}
+var goalname=''<!-- 全局变量获取内容的题目，以供模板form,ajax使用 -->
+{% include 'form.js' %}
+{% include 'ajax.js' %}
+{% endblock %}

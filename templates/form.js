@@ -3,7 +3,7 @@ $('.join').click(function(){
 	goalname='华理创客空间'
 	$('#myModalLabel').text('想加入'+goalname+'?')
 
-	if ($('#recipient-name').val()==Null|| $('#phone-number').val()){
+	if ($('#recipient-name').val()==null|| $('#phone-number').val()){
 		$('#recipient-name').removeAttr('disabled')
 		$('#phone-number').removeAttr('disabled')	
 	}
