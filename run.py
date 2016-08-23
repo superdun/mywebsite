@@ -11,6 +11,9 @@ import flask_login
 import os
 import os.path as op
 
+from logging import FileHandler 
+file_handler = FileHandler ('debug.log')
+
 
 
     #
@@ -201,4 +204,5 @@ def logout():
     return 'Logged out'
 
 if __name__ == '__main__':
+    app.logger.addHandler(file_handler)
     app.run(debug=False)
