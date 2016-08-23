@@ -10,11 +10,10 @@ import moduleAdmin as admin
 import flask_login
 import os
 import os.path as op
+#debug in wsgi
+# from werkzeug.debug import DebuggedApplication
 
-from logging import FileHandler 
-file_handler = FileHandler ('debug.log')
-
-
+# app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
 
     #
 
@@ -202,7 +201,6 @@ def protected():
 def logout():
     flask_login.logout_user()
     return 'Logged out'
-
+app.debug = False
 if __name__ == '__main__':
-    app.logger.addHandler(file_handler)
-    app.run(debug=False)
+    app.run()
