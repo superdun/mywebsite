@@ -14,7 +14,7 @@ import flask_login
 import os
 import os.path as op
 from moduleGlobal import app, admin,qiniu_store, QINIU_DOMAIN, CATEGORY, UPLOAD_URL
-
+import shutil
 
 def dashboard():
 
@@ -54,7 +54,7 @@ class ImageUpload(form.ImageUploadField):
             ret, info = qiniu_store.save(fp, filename)
             if 200 != info.status_code:
                 raise Exception("upload to qiniu failed", ret)
-            # os.remove(path)
+            shutil.rmtree(os.path.dirname(path))
             return filename
 
 

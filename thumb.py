@@ -20,7 +20,8 @@ def allowed_file(filename):
 def upload_file(file, basePath, domain, storeModel):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        path = basePath + '/' + relativePath() + filename
+        pic_dir = basePath + '/' + relativePath()
+        path = pic_dir + filename
         if not op.exists(op.dirname(path)):
             os.makedirs(os.path.dirname(path))
 
@@ -32,7 +33,7 @@ def upload_file(file, basePath, domain, storeModel):
             if 200 != info.status_code:
                 raise Exception("upload to qiniu failed", info)
                 
-        # shutil.rmtree(basePath + '/' + relativePath())
+        shutil.rmtree(pic_dir)
         # return filename
         localUrl = 'http://' + domain + '/' + qiniu_file_name
         title = filename.rsplit('.', 1)[0]

@@ -201,4 +201,4 @@ def logout():
     return 'Logged out'
 
 if __name__ == '__main__':
-    app.run(port=8081, debug=True)
+    app.run(debug=False)
