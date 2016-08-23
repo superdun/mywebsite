@@ -15,7 +15,7 @@ import os.path as op
 
     #
 
-
+application = app
 @app.route('/')
 def index(carousels=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     carousels = Carousel.query.all()
