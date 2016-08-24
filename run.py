@@ -71,6 +71,11 @@ def joinin():  # ajax....
     else:
         return jsonify(status='NO', result=u'请正确完整输入个人信息！')
 
+#IoT
+@app.route('/iot')
+def iot():
+    return render_template('iot.html')
+
 
 @app.route('/admin/upload', methods=['POST'])
 def upload():
@@ -78,7 +83,7 @@ def upload():
     result = thumb.upload_file(file, UPLOAD_URL, QINIU_DOMAIN, qiniu_store)
     return jsonify(result)
 
-
+#personal
 @app.route('/stationmaster')  # personal
 def stationmaster():
     return render_template('stationmaster.html')
@@ -122,6 +127,7 @@ def fiveson():
 @app.route('/mosquito')
 def mosquito():
     return render_template('mosquito/mosquito.html')
+
 # admin
 admin.dashboard()
 
@@ -201,6 +207,6 @@ def protected():
 def logout():
     flask_login.logout_user()
     return 'Logged out'
-app.debug = False
+app.debug = True
 if __name__ == '__main__':
     app.run()
