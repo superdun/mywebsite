@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, url_for, jsonify, request, Response, redirect
-from  moduleMail import mail
+from moduleMail import mail
 from flask_bootstrap import Bootstrap
 from dbORM import db, User, Post, Carousel
 import thumb
@@ -10,14 +10,17 @@ import moduleAdmin as admin
 import flask_login
 import os
 import os.path as op
+from moduleWechat import wechat_resp
 #debug in wsgi
 # from werkzeug.debug import DebuggedApplication
 
 # app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
 
-    #
+#
 
 application = app
+
+
 @app.route('/')
 def index(carousels=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     carousels = Carousel.query.all()
@@ -29,7 +32,8 @@ def index(carousels=None, img_domain=QINIU_DOMAIN, thumbnail=''):
 def show_works(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
     print CATEGORY[0][0]
-    items = Post.query.filter_by(category=CATEGORY[0][0],status='published').all()
+    items = Post.query.filter_by(
+        category=CATEGORY[0][0], status='published').all()
 
     return render_template('show_works.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
@@ -37,21 +41,24 @@ def show_works(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
 @app.route('/apply')
 def apply(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
-    items = Post.query.filter_by(category=CATEGORY[1][0],status='published').all()
+    items = Post.query.filter_by(
+        category=CATEGORY[1][0], status='published').all()
     return render_template('apply.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
 @app.route('/book_tools')
 def book_tools(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
-    items = Post.query.filter_by(category=CATEGORY[2][0],status='published').all()
+    items = Post.query.filter_by(
+        category=CATEGORY[2][0], status='published').all()
     return render_template('book_tools.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
 @app.route('/our_cool')
 def our_cool(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
-    items = Post.query.filter_by(category=CATEGORY[3][0],status='published').all()
+    items = Post.query.filter_by(
+        category=CATEGORY[3][0], status='published').all()
     return render_template('our_cool.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
@@ -71,10 +78,27 @@ def joinin():  # ajax....
     else:
         return jsonify(status='NO', result=u'请正确完整输入个人信息！')
 
-#IoT
+# IoT
+
+
 @app.route('/iot')
 def iot():
     return render_template('iot.html')
+
+
+@app.route('/iot/wechat')
+def iot_bath_temp():
+    token = app.config.get('WECHAT_TOKEN')
+    appid = app.config.get('WECHAT_APPID')
+    appsecret = app.config.get('WECHAT_APPSECRET')
+    encoding_aes_key = app.config.get('WECHAT_AESKEY')
+    encrypt_mode = app.config.get('WECHAT_ENC_MODE')
+    signature = request.args.get('signature')
+    timestamp = request.args.get('timestamp')
+    nonce = request.args.get('nonce')
+    echostr = request.args.get('echostr')
+    return wechat_resp(token, appid, appsecret,
+                       encoding_aes_key, encrypt_mode,signature,timestamp,nonce,echostr)
 
 
 @app.route('/admin/upload', methods=['POST'])
@@ -83,7 +107,9 @@ def upload():
     result = thumb.upload_file(file, UPLOAD_URL, QINIU_DOMAIN, qiniu_store)
     return jsonify(result)
 
-#personal
+# personal
+
+
 @app.route('/stationmaster')  # personal
 def stationmaster():
     return render_template('stationmaster.html')
@@ -134,14 +160,13 @@ admin.dashboard()
 # login
 
 
-
 login_manager = flask_login.LoginManager()
 
 login_manager.init_app(app)
-users= {}
+users = {}
 raw_users = User.query.all()
 for user in raw_users:
-	users[user.name]={'password':user.password}
+    users[user.name] = {'password': user.password}
 
 
 @login_manager.unauthorized_handler
