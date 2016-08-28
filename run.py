@@ -78,6 +78,17 @@ def joinin():  # ajax....
     else:
         return jsonify(status='NO', result=u'请正确完整输入个人信息！')
 
+# post
+
+
+@app.route('/post/<postId>')
+def post(postId):
+    item = Post.query.filter_by(id=postId).first()
+    item.view_count = item.view_count + 1
+    db.session.commit()
+    return render_template('post.html', item=item)
+
+
 # IoT
 
 
@@ -86,7 +97,7 @@ def iot():
     return render_template('iot.html')
 
 
-@app.route('/iot/wechat')
+@app.route('/iot/wechat', methods=['GET', 'POST'])
 def iot_bath_temp():
     token = app.config.get('WECHAT_TOKEN')
     appid = app.config.get('WECHAT_APPID')
@@ -96,9 +107,9 @@ def iot_bath_temp():
     signature = request.args.get('signature')
     timestamp = request.args.get('timestamp')
     nonce = request.args.get('nonce')
-    echostr = request.args.get('echostr')
+    body_text = request.data
     return wechat_resp(token, appid, appsecret,
-                       encoding_aes_key, encrypt_mode,signature,timestamp,nonce,echostr)
+                       encoding_aes_key, encrypt_mode, signature, timestamp, nonce, body_text)
 
 
 @app.route('/admin/upload', methods=['POST'])

@@ -26,7 +26,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     content = db.Column(db.String(2000))
-    create_at = db.Column(db.Integer)
+    create_at = db.Column(db.String(255))
     img = db.Column(db.String(120))
     view_count = db.Column(db.Integer)
     summary = db.Column(db.String(255))
@@ -38,7 +38,7 @@ class Post(db.Model):
     def __init__(self, title='', content='', img='', view_count=0, summary='', category='', book_count=0, max_book_count=0,status='',is_full='no'):
         self.title = title
         self.content = content
-        self.create_at = time.time()
+        self.create_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
         self.img = img
         self.view_count = view_count
         self.summary = summary

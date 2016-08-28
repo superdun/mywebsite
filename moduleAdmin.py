@@ -54,13 +54,12 @@ class ImageUpload(form.ImageUploadField):
             ret, info = qiniu_store.save(fp, filename)
             if 200 != info.status_code:
                 raise Exception("upload to qiniu failed", ret)
-            shutil.rmtree(os.path.dirname(path))
+            #shutil.rmtree(os.path.dirname(path))
             return filename
 
 
 class PostView(ModelView):
     def is_accessible(self):
-        print flask_login.current_user.is_authenticated
 
         return flask_login.current_user.is_authenticated
 

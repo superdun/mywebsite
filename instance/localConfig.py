@@ -4,6 +4,7 @@ from flask import Flask
 SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:password@localhost:3306/makersite'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECRET_KEY = '123456'
+
 QINIU_ACCESS_KEY = 'u1M-QQ-m0ciNAhDn2AZ6iODyKnjUmY7EW1uH2ZiZ'
 QINIU_SECRET_KEY = 'QN3dDZvbX5MdDxfWsf4vua774Wz_5JFCZP78PGTU'
 QINIU_BUCKET_NAME = 'makerimg'
@@ -14,8 +15,15 @@ MAIL_PORT = 465
 MAIL_USE_SSL = True
 MAIL_USERNAME = 'ecust_maker@163.com'
 MAIL_PASSWORD = 'ecustmaker1'
+
 WECHAT_TOKEN = 'weixin'
 WECHAT_APPID = 'wx615f55ed073ca8c8'
 WECHAT_APPSECRET = '735b06f947fa2afaca5168d2594775b0'
 WECHAT_AESKEY = '0x4XDH4Q7zxbBzeglgSkUXsb1gEtUM9mAamuf1m1Hjk'
 WECHAT_ENC_MODE = 'normal'
+ONENET_API_DEVICE = {'bathroom': 3227278}
+ONENET_API_KEY = 'txhCzJ9NX7iORS9RwYHEdfpTck0='
+
+TULING_URL_API = "http://www.tuling123.com/openapi/api"
+TULING_APIKEY = "84fd4d2eb37c435aaf08e9e9f127b6ea"
+TULING_SECRET = "96b0292589c89729"
