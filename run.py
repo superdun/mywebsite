@@ -33,7 +33,7 @@ def show_works(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
     print CATEGORY[0][0]
     items = Post.query.filter_by(
-        category=CATEGORY[0][0], status='published').all()
+        category=CATEGORY[0][0], status='published').order_by('id desc')
 
     return render_template('show_works.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
@@ -42,7 +42,7 @@ def show_works(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
 def apply(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
     items = Post.query.filter_by(
-        category=CATEGORY[1][0], status='published').all()
+        category=CATEGORY[1][0], status='published').order_by('id desc')
     return render_template('apply.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
@@ -50,7 +50,7 @@ def apply(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
 def book_tools(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
     items = Post.query.filter_by(
-        category=CATEGORY[2][0], status='published').all()
+        category=CATEGORY[2][0], status='published').order_by('id desc')
     return render_template('book_tools.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
@@ -58,7 +58,7 @@ def book_tools(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
 def our_cool(items=None, img_domain=QINIU_DOMAIN, thumbnail=''):
     thumbnail = app.config.get('PREVIEW_THUMBNAIL')
     items = Post.query.filter_by(
-        category=CATEGORY[3][0], status='published').all()
+        category=CATEGORY[3][0], status='published').order_by('id desc')
     return render_template('our_cool.html', items=items, img_domain=img_domain, thumbnail=thumbnail)
 
 
