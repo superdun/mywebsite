@@ -3,7 +3,7 @@
 from flask import Flask, render_template, url_for, jsonify, request, Response, redirect
 from moduleMail import mail
 from flask_bootstrap import Bootstrap
-from dbORM import db, User, Post, Carousel
+from dbORM import db, User, Post, Carousel, Message
 import thumb
 from moduleGlobal import app, bootstrap, qiniu_store, QINIU_DOMAIN, CATEGORY, UPLOAD_URL
 import moduleAdmin as admin
@@ -71,9 +71,12 @@ def apply_ajax():
 @app.route('/joinus')
 def joinin():  # ajax....
     if request.args.get('name') and request.args.get('phone').isdigit():
-        text = request.args.get(
-            'name') + u'申请加入' + request.args.get('goal') + u'，电话:' + request.args.get('phone')
-        mail(request.args.get('goal'), text)
+        name = request.args.get('name')
+        goal = request.args.get('goal')
+        mobile = request.args.get('phone')
+
+        # mail(request.args.get('goal'), text)
+
         return jsonify(status='OK', result=u'欢迎你!!  ' + request.args.get('name') + u'  你的信息已经提交，我们会尽快联系你')
     else:
         return jsonify(status='NO', result=u'请正确完整输入个人信息！')

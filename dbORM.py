@@ -7,7 +7,25 @@ app.config.from_object('config')
 app.config.from_pyfile('localConfig.py')
 db = SQLAlchemy(app)
 
-#db
+# db
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    goal = db.Column(db.String(120))
+    password = db.Column(db.String(120))
+    create_time = db.Column(db.String(120))
+
+    def __init__(self, name='', auth=1, password=''):
+        self.name = name
+        self.auth = auth
+        self.password = password
+
+    def __repr__(self):
+        return '<User %r>' % self.name
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -21,7 +39,9 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.name
-#Flask-Admin can't create model if it has constructor with non-default parameters
+# Flask-Admin can't create model if it has constructor with non-default parameters
+
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
@@ -35,7 +55,8 @@ class Post(db.Model):
     max_book_count = db.Column(db.Integer)
     status = db.Column(db.String(120))
     is_full = db.Column(db.String(120))
-    def __init__(self, title='', content='', img='', view_count=0, summary='', category='', book_count=0, max_book_count=0,status='',is_full='no'):
+
+    def __init__(self, title='', content='', img='', view_count=0, summary='', category='', book_count=0, max_book_count=0, status='', is_full='no'):
         self.title = title
         self.content = content
         self.create_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
@@ -47,8 +68,11 @@ class Post(db.Model):
         self.max_book_count = max_book_count
         self.status = status
         self.is_full = is_full
+
     def __repr__(self):
         return '<post %r>' % self.title
+
+
 class Carousel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     img = db.Column(db.String(80))
