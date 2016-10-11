@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, jsonify, request, Response, r
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from wtforms import Form as wtForm
-from dbORM import db, User, Post, Carousel
+from dbORM import db, User, Post, Carousel,Message
 from wtforms import TextAreaField, SelectField
 from wtforms.widgets import TextArea
 import thumb
@@ -22,6 +22,7 @@ def dashboard():
     admin.add_view(UserView(User, db.session))
     admin.add_view(PostView(Post, db.session))
     admin.add_view(CarouselView(Carousel, db.session))
+    admin.add_view(ModelView(Message, db.session))
 
 
 

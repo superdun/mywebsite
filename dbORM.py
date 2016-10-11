@@ -14,13 +14,15 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     goal = db.Column(db.String(120))
-    password = db.Column(db.String(120))
-    create_time = db.Column(db.String(120))
+    mobile = db.Column(db.String(120))
+    update_time = db.Column(db.String(120))
 
-    def __init__(self, name='', auth=1, password=''):
+    def __init__(self, name='', goal='', password='',mobile='',update_time=''):
         self.name = name
-        self.auth = auth
-        self.password = password
+        self.goal = goal
+        self.mobile = mobile
+        self.update_time = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time()))
+
 
     def __repr__(self):
         return '<User %r>' % self.name

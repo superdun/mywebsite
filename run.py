@@ -70,10 +70,13 @@ def apply_ajax():
 
 @app.route('/joinus')
 def joinin():  # ajax....
-    if request.args.get('name') and request.args.get('phone').isdigit():
+    if request.args.get('name') and request.args.get('phone').isdigit() and  app.config.get('BASE_URL')  in request.url_root:
         name = request.args.get('name')
         goal = request.args.get('goal')
         mobile = request.args.get('phone')
+        M = Message(name=name,goal=goal,mobile=mobile)
+        db.session.add(M)
+        db.session.commit()
 
         # mail(request.args.get('goal'), text)
 
