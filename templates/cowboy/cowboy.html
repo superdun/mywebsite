@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <title>牛仔挑战赛</title>
+</head>
+<body id="body" style="padding: 10;">
+<div id="loadLayer" style="position: absolute;">
+    <p></p>
+</div>
+    <div id = 'gameLayer'><canvas  id="cowboy">您的浏览器不支持HTML5 canvas，请换一个浏览器。</canvas></div>
+    <div id="overLayer" style="position: absolute;"> </div>
+</body>
+<script src="{{url_for('static', filename='js/jquery-1.12.3.min.js')}}"></script>
+    <script>{% include 'cowboy/main.js' %}</script>
+</html>
