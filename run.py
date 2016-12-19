@@ -11,6 +11,7 @@ import flask_login
 import os
 import os.path as op
 from moduleWechat import wechat_resp
+from werkzeug import secure_filename
 #debug in wsgi
 # from werkzeug.debug import DebuggedApplication
 
@@ -70,11 +71,11 @@ def apply_ajax():
 
 @app.route('/joinus')
 def joinin():  # ajax....
-    if request.args.get('name') and request.args.get('phone').isdigit() and  app.config.get('BASE_URL')  in request.url_root:
+    if request.args.get('name') and request.args.get('phone').isdigit() and app.config.get('BASE_URL') in request.url_root:
         name = request.args.get('name')
         goal = request.args.get('goal')
         mobile = request.args.get('phone')
-        M = Message(name=name,goal=goal,mobile=mobile)
+        M = Message(name=name, goal=goal, mobile=mobile)
         db.session.add(M)
         db.session.commit()
 
@@ -171,6 +172,21 @@ def fiveson():
 def mosquito():
     return render_template('mosquito/mosquito.html')
 
+
+@app.route('/cowboy')
+def cowboy():
+    return render_template('cowboy/cowboy.html')
+
+
+@app.route('/face', methods=['GET', 'POST'])
+def face():
+    if request.method == 'GET':
+        return render_template('face/faceIndex.html')
+    if request.method == 'POST':
+        img = request.files['img']
+
+        img.save('static/uploadFace/'+ img.filename)
+        return jsonify(status='ok')
 # admin
 admin.dashboard()
 

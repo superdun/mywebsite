@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>盾半仙的相面馆</title>
+  <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet"></head>
+<body id="body">
+<div class="container">
+    <div class="row"> <div class="col-md-3 col-sm-1"></div><div class="col-md-6 col-sm-10">
+        <img src="{{url_for('static', filename='demos/face/head.jpg')}}" width="100%">
+    </div><div class="col-md-3 col-sm-1"></div></div>
+    <div class="row">
+        <div class="col-md-3 col-sm-1"></div>
+        <div class="col-md-6 col-sm-10" id="imgContainer">
+            <label>请选择你想相的面：</label>
+            <input type="file" id="file_input" class="form-control">
+        </div>
+        <div class="col-md-3 col-sm-1"></div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-sm-1"></div>
+        <div class="col-md-6 col-sm-10">
+
+            <input type="button" id="upload" class="form-control">
+        </div>
+        <div class="col-md-3 col-sm-1"></div>
+
+    </div>
+
+</div>
+
+</body>
+<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+ <script>
+window.onload = function(){
+        var input = document.getElementById("file_input");
+        var result,div;
+
+
+        if(typeof FileReader==='undefined'){
+            result.innerHTML = "抱歉，你的浏览器不支持 FileReader";
+            input.setAttribute('disabled','disabled');
+        }else{
+            input.addEventListener('change',readFile,false);
+        }　　　　//handler
+        function readFile(){
+
+                if (!input['value'].match(/.jpg|.gif|.png|.bmp/i)){　　//判断上传文件格式
+                    return alert("上传的图片格式不正确，请重新选择")　　　　　　　　}
+                var reader = new FileReader();
+                reader.readAsDataURL(this.files[0]);
+                reader.onload = function(e){
+                    result = '<div id="result"><img src="'+this.result+'" alt=""/></div>';
+                    dataResult = this.result;
+                    div = document.createElement('div');
+                    div.innerHTML = result;
+                    document.getElementById('imgContainer').appendChild(div);  　　//插入dom树                　　　　　　　　　
+                }
+
+        }
+        $('#upload').click(function(){
+            var formData= new FormData();
+            var img = document.getElementById("file_input").files[0];
+            formData.append('img',img)
+            $.ajax({
+                url:'/face',
+                type:'post',
+                data:formData,
+                contentType: false,
+                processData: false,
+                success:function(data){
+                    alert("上传成功！");
+                },
+                error: function () {
+                        alert("上传失败！");
+                }
+            })
+        })
+    }
+
+ </script>
+</html>

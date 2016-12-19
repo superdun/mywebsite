@@ -51,12 +51,13 @@ var draw = {
         else{
             game.ctx.drawImage(game.bg,0,draw.bgY-game.height,game.bg.width,game.height,0,0,game.width,game.height);
             draw.bgY-=3
-        }
-
-        
-    }
+        }   
+    },
+    cowboy:function(){}
 }
+var cowboy={
 
+}
 
 var loader = {
 
@@ -69,10 +70,34 @@ var loader = {
         game.bg.onload=function(){
             loader.loadercount()
         };
+        cowboy.ready=new Image();
+        game.totalcount++;
+        game.bg.src="{{url_for('static', filename='demos/cowboy/img/ready.png')}}";
+        cowboy.ready.onload=function(){
+            loader.loadercount()
+        };
+        cowboy.walk1=new Image();
+        game.totalcount++;
+        game.bg.src="{{url_for('static', filename='demos/cowboy/img/walk1.png')}}";
+        cowboy.walk1.onload=function(){
+            loader.loadercount()
+        };
+        cowboy.walk2=new Image();
+        game.totalcount++;
+        game.bg.src="{{url_for('static', filename='demos/cowboy/img/walk2.png')}}";
+        cowboy.walk2.onload=function(){
+            loader.loadercount()
+        };
+        cowboy.fire=new Image();
+        game.totalcount++;
+        game.bg.src="{{url_for('static', filename='demos/cowboy/img/fire.png')}}";
+        cowboy.fire.onload=function(){
+            loader.loadercount()
+        };
+
     },
     loadercount:function(){
         game.loadcount++;
-        
         $("p").html("载入中："+game.loadcount+"/"+game.totalcount);
         if(game.loadcount===game.totalcount){
             game.start();
