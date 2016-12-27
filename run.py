@@ -3,7 +3,7 @@
 from flask import Flask, render_template, url_for, jsonify, request, Response, redirect
 from moduleMail import mail
 from flask_bootstrap import Bootstrap
-from dbORM import db, User, Post, Carousel, Message
+from dbORM import db, User, Post, Carousel, Message,Face
 import thumb
 from moduleGlobal import app, bootstrap, qiniu_store, QINIU_DOMAIN, CATEGORY, UPLOAD_URL
 import moduleAdmin as admin
@@ -12,6 +12,7 @@ import os
 import os.path as op
 from moduleWechat import wechat_resp
 from werkzeug import secure_filename
+from faceModule import detect
 #debug in wsgi
 # from werkzeug.debug import DebuggedApplication
 
@@ -180,13 +181,37 @@ def cowboy():
 
 @app.route('/face', methods=['GET', 'POST'])
 def face():
-    if request.method == 'GET':
-        return render_template('face/faceIndex.html')
-    if request.method == 'POST':
-        img = request.files['img']
 
-        img.save('static/uploadFace/'+ img.filename)
-        return jsonify(status='ok')
+    if request.method == 'GET':
+        list = Face.query.order_by(Face.grade)[0:3]
+        print list
+        return render_template('face/faceIndex.html',list=list)
+    if request.method == 'POST':
+        key = app.config.get('FACE_KEY')
+        appKey = app.config.get('FACE_API_KEY')
+        img = request.files['img']
+        sourceResult = thumb.upload_file(img, UPLOAD_URL, QINIU_DOMAIN, qiniu_store)
+        if sourceResult['result'] == 1:
+            sourceImg = sourceResult['localUrl']
+            detectResult = detect(sourceImg, key, appKey)
+            print detectResult
+            if detectResult['status']:
+                detectResult['status']='ok'
+                detectResult['sourceImg'] = sourceImg
+                faceDB = Face(grade=round(detectResult['grades']['grade'],3), eye=round(detectResult['grades']['eye'],3),
+                              mouth=round(detectResult['grades']['mouth'],3),chin=round(detectResult['grades']['chin'],3),
+                              feel=round(detectResult['grades']['feel'],3),nose=round(detectResult['grades']['nose'],3),
+                              comment=detectResult['comment'],sourceImg=sourceImg,
+                              resultImg=detectResult['imgResult']['localUrl'])
+                db.session.add(faceDB)
+                db.session.commit()
+                return jsonify(detectResult)
+            else:
+                detectResult['status'] = 'failed'
+                return jsonify(detectResult)
+        else:
+            return jsonify(status='failed',error=u'服务器出错，请稍后再试')
+
 # admin
 admin.dashboard()
 

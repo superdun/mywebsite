@@ -1,42 +1,141 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>盾半仙的相面馆</title>
-  <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
-  <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet"></head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>盾半仙的相面馆</title>
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+</head>
 <body id="body">
 <div class="container">
-    <div class="row"> <div class="col-md-3 col-sm-1"></div><div class="col-md-6 col-sm-10">
-        <img src="{{url_for('static', filename='demos/face/head.jpg')}}" width="100%">
-    </div><div class="col-md-3 col-sm-1"></div></div>
+    <div class="row">
+        <div class="col-md-3 col-sm-1"></div>
+        <div class="col-md-6 col-sm-10">
+            <!--<img src="{{url_for('static', filename='demos/face/head.jpg')}}" width="100%">-->
+            <h2>颜值测评 0.2 by Dun</h2>
+
+
+
+        </div>
+        <div class="col-md-3 col-sm-1"></div>
+    </div>
     <div class="row">
         <div class="col-md-3 col-sm-1"></div>
         <div class="col-md-6 col-sm-10" id="imgContainer">
-            <label>请选择你想相的面：</label>
+            <label>请选择你想测的照片：</label>
             <input type="file" id="file_input" class="form-control">
+            <div id="uploadContainer"></div>
         </div>
         <div class="col-md-3 col-sm-1"></div>
 
     </div>
     <div class="row">
         <div class="col-md-3 col-sm-1"></div>
-        <div class="col-md-6 col-sm-10">
-
-            <input type="button" id="upload" class="form-control">
+        <div class="col-md-6 col-sm-10" >
+            <br>
+            <button type="button" id="upload" data-loading-text="开始测评" class="btn btn-primary" autocomplete="off">
+                开始测评
+            </button>
+            <h3>颜值三甲</h3>
+            <ul class="list-group">
+                <li class="list-group-item"><div class="row"><div class="col-md-2 col-sm-2"><h1>1.</h1></div><div class="col-md-6 col-sm-6"><img src="{{ list[0]['sourceImg'] }}" style="width:50%;"></div><div class="col-md-4 col-sm-4"><h4>综合颜值：{{list[0]['grade']}}分</h4></div></div></li>
+                <li class="list-group-item"><div class="row"><div class="col-md-2 col-sm-2"><h1>2.</h1></div><div class="col-md-6 col-sm-6"><img src="{{ list[1]['sourceImg'] }}" style="width:50%;"></div><div class="col-md-4 col-sm-4"><h4>综合颜值：{{list[1]['grade']}}分</h4></div></div></li>
+                <li class="list-group-item"><div class="row"><div class="col-md-2 col-sm-2"><h1>3.</h1></div><div class="col-md-6 col-sm-6"><img src="{{ list[2]['sourceImg'] }}" style="width:50%;"></div><div class="col-md-4 col-sm-4"><h4>综合颜值：{{list[2]['grade']}}分</h4></div></div></li>
+            </ul>
         </div>
         <div class="col-md-3 col-sm-1"></div>
 
     </div>
 
 </div>
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title">测评结果</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">颜值测评报告</div>
+                    <div class="panel-body">
+                        <table class="table">
 
+                            <tr>
+                                <td>
+                                    比例评分：
+                                </td>
+                                <td id="feel">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    眼睛评分：
+                                </td>
+                                <td id="eye">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td id="nose">
+                                    鼻子评分：
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    嘴巴评分：
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    下颌评分：
+                                </td>
+                                <td id="chin">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    综合评分：
+                                </td>
+                                <td id="grade">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    评语：
+                                </td>
+                                <td id="comment">
+
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </body>
 <script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
 <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
- <script>
+<script>
 window.onload = function(){
         var input = document.getElementById("file_input");
         var result,div;
@@ -55,10 +154,9 @@ window.onload = function(){
                 var reader = new FileReader();
                 reader.readAsDataURL(this.files[0]);
                 reader.onload = function(e){
-                    result = '<div id="result"><img src="'+this.result+'" alt=""/></div>';
+                    result = '<div id="result" align="center"><img src="'+this.result+'" alt=""/></div>';
                     dataResult = this.result;
-                    div = document.createElement('div');
-                    div.innerHTML = result;
+                    document.getElementById('uploadContainer').innerHTML = result;
                     document.getElementById('imgContainer').appendChild(div);  　　//插入dom树                　　　　　　　　　
                 }
 
@@ -74,7 +172,8 @@ window.onload = function(){
                 contentType: false,
                 processData: false,
                 success:function(data){
-                    alert("上传成功！");
+                    $('#myModal').modal()
+
                 },
                 error: function () {
                         alert("上传失败！");
@@ -83,5 +182,9 @@ window.onload = function(){
         })
     }
 
- </script>
+
+
+
+
+</script>
 </html>

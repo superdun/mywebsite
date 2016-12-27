@@ -1,7 +1,7 @@
 from flask import Flask
 
 
-SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:password@localhost:3306/makersite'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:password@localhost:3306/mywebsite'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECRET_KEY = '123456'
 
@@ -27,3 +27,6 @@ ONENET_API_KEY = 'txhCzJ9NX7iORS9RwYHEdfpTck0='
 TULING_URL_API = "http://www.tuling123.com/openapi/api"
 TULING_APIKEY = "84fd4d2eb37c435aaf08e9e9f127b6ea"
 TULING_SECRET = "96b0292589c89729"
+
+FACE_KEY = "ZfZkvZVgtmq023KgiYjj8zYp-eGmG-wJ"
+FACE_API_KEY = "F2pl2jjyeTtSFPIllQ-MCF9HT2DPqRv5"

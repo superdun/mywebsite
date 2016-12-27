@@ -38,3 +38,25 @@ def upload_file(file, basePath, domain, storeModel):
         localUrl = 'http://' + domain + '/' + qiniu_file_name
         title = filename.rsplit('.', 1)[0]
         return {"title": title, "isImage": 1, "fileName": filename, "localUrl": localUrl, "result": 1}
+
+
+def upload_file_by_pillow(file,filename, basePath, domain, storeModel):
+    if file :
+        filename = secure_filename(filename)
+        pic_dir = basePath + '/' + relativePath()
+        path = pic_dir + filename
+        if not op.exists(op.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+
+        file.save(path,'JPEG')
+        qiniu_file_name = relativePath() + filename
+        with open(path, 'rb') as fp:
+            ret, info = storeModel.save(fp, qiniu_file_name)
+            if 200 != info.status_code:
+                raise Exception("upload to qiniu failed", info)
+
+        shutil.rmtree(pic_dir)
+        # return filename
+        localUrl = 'http://' + domain + '/' + qiniu_file_name
+        title = filename.rsplit('.', 1)[0]
+        return {"title": title, "isImage": 1, "fileName": filename, "localUrl": localUrl, "result": 1}
