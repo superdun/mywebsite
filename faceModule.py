@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw
 import thumb
 from moduleGlobal import qiniu_store, QINIU_DOMAIN, UPLOAD_URL
 from StringIO import StringIO
-import urllib
+import urllib2
 
 class faceDetect(object):
     def __init__(self, fileUrl, apiKey, apiSecret):
@@ -47,8 +47,8 @@ class faceDetect(object):
                 self.error = u'sorry,没检测到脸...'
                 return 1
             face = self.result['faces'][0]
-            self.gender = face['attributes']['gender']
-            self.age = face['attributes']['age']
+            self.gender = face['attributes']['gender']['value']
+            self.age = face['attributes']['age']['value']
             if face['attributes']['smile']['value'] > face['attributes']['smile']['threshold']:
                 self.isSmilling = True
             else:
@@ -126,7 +126,13 @@ class faceDetect(object):
     def showResult(self):
         if not self.status:
             return 1
-        im = Image.open(StringIO(urllib.urlopen(self.file).read()))
+        try:
+            im = Image.open(StringIO(urllib2.urlopen(self.file,timeout=1).read()))
+        except urllib2.URLError, e:
+            self.status=False
+            self.error=u'服务器忙，请稍候再试'
+            return 1
+
         draw = ImageDraw.Draw(im)
         self.points = []
         for i in self.result['faces'][0]['landmark'].values():
@@ -153,6 +159,11 @@ class faceDetect(object):
         if result['result'] != 1:
             self.status =False
             self.error = u'服务器忙，请稍候再试'
+        pornResult =  detectPorn(im)[0]
+        if pornResult:
+            self.status=False
+            self.error=u'你上传的图片不正经啊！分析不了，换一个试试？'
+            return 1
         del im
         return result
         # im.save(self.filename[:-4] + 'ok.jpg', 'JPEG')
@@ -212,20 +223,31 @@ class faceDetect(object):
         self.mouthGrade =200 / ((6 ** self.mouthGrade  - 1 + 2))
         self.chinGrade =200 / ((6 ** self.chinGrade  - 1 + 2))
         self.grade = 800 / ((3 ** score - 1 + 8))
-        return {'grade':self.grade,'eye':self.eyeGrade,'nose':self.noseGrade,'mouth':self.mouthGrade,'chin':self.chinGrade,'feel':self.feelGrade}
+        return {'grade':round(self.grade,3),'eye':round(self.eyeGrade,3),'nose':round(self.noseGrade,3),'mouth':round(self.mouthGrade,3),'chin':round(self.chinGrade,3),'feel':round(self.feelGrade,3)}
     def message(self):
         if not self.status:
             return 1
         if self.gender =='Male':
-            baseMessage = 'Hello,帅哥！'
+            if self.age>25:
+                baseMessage = u'Hello,先生！'
+            elif self.age<15:
+                baseMessage = u'Hello,小子！'
+            else:
+                baseMessage = u'Hello,哥们儿！'
         else:
-            baseMessage = 'Hello,美女！'
+            if self.age>25:
+                baseMessage = u'Hello,女士！'
+            elif self.age<15:
+                baseMessage = u'Hello,小丫头！'
+            else:
+                baseMessage = u'Hello,妹纸！'
+
         if self.glassStatus =='Normal':
             baseMessage = baseMessage+u'戴眼镜很文艺，不过会影响检测结果哦。'
         elif self.glassStatus =='Dark':
             baseMessage = baseMessage+u'你戴着墨镜让我怎么检测？！'
         if self.isSmilling:
-            baseMessage = baseMessage+u'笑得很开心，有啥好事说来听听？'
+            baseMessage = baseMessage+u'笑得很开心，有啥好事说来听听。'
         else:
             baseMessage = baseMessage + u'不要这么严肃嘛，开心点！'
         if not self.headPutRight:
@@ -242,7 +264,7 @@ class faceDetect(object):
                        'rateNoseFaceWidth': [u'鼻子有点宽', u'鼻子很漂亮', u'鼻子细细的'],
                        'rateEyesCenterMouthWidth': [u'是个樱桃小嘴', u'嘴大小适中', u'，呃，你的嘴有点大哦'],
                        'rateChinMouthNoseLength': [u'下巴偏长', u'下巴比例合适', u'下巴偏短'],
-                       'rateNoseWidthLength': [u'鼻子有些奇怪，有点太宽了', u'鼻子大小合适刚刚好', u'鼻子长宽比有些奇怪，有点太长了']
+                       'rateNoseWidthLength': [u'鼻子有点宽', u'鼻子大小合适刚刚好', u'鼻子长宽比有些奇怪，有点太长了']
                        }
         rateDict = self.rateDict
         isPerfact = True
@@ -252,9 +274,17 @@ class faceDetect(object):
         notWanMei = [u'您的颜值还不错啦，您',u'您的颜值已经超越路人啦，您']
         chouLou = [u'是不是照片没选好，电脑分析您的颜值比较低哦，我本人是不信的！您',u'呃.......您',u'怎么和你形容呢....你']
         for i in rateDict:
+            print i
+            print rateDict[i]
             if rateDict[i] > 0.1:
                 isPerfact = False
                 weakPoint.append(messageDict[i][0])
+            elif rateDict[i] < -0.1:
+                isPerfact = False
+                weakPoint.append(messageDict[i][2])
+            elif (i=='rateLeftEyeFaceWidth' or i=='rateRightEyeFaceWidth') and (rateDict[i]<-0.01) :
+                isPerfact = False
+                weakPoint.append(messageDict[i][2])
             elif rateDict[i] < -0.1:
                 isPerfact = False
                 weakPoint.append(messageDict[i][2])
@@ -269,12 +299,18 @@ class faceDetect(object):
 
         goodPoint = makeSentence(bingLie, goodPoint)
         weakPoint = makeSentence(bingLie, weakPoint)
-        comment = connectSentences(zhuanZhe,[goodPoint,weakPoint])
-        if isPerfact or self.grade>85:
+        print self.grade
+        if isPerfact :
+            comment = goodPoint
             baseMessage = baseMessage+wanMei[random.randint(0,len(wanMei)-1)]
+        elif self.grade>85:
+            comment = connectSentences(zhuanZhe, [goodPoint, weakPoint])
+            baseMessage = baseMessage + wanMei[random.randint(0, len(wanMei) - 1)]
         elif self.grade<65:
+            comment = connectSentences(zhuanZhe, [goodPoint, weakPoint])
             baseMessage = baseMessage+chouLou[random.randint(0,len(chouLou)-1)]
         else:
+            comment = connectSentences(zhuanZhe, [goodPoint, weakPoint])
             baseMessage = baseMessage + notWanMei[random.randint(0, len(notWanMei) - 1)]
         comment= baseMessage+comment
         return comment
@@ -283,7 +319,7 @@ class faceDetect(object):
 
 
 # # class fortuneTelling(object):
-#     def __init__(self,face):
+#     def __init__(self,face):detectPorn
 def getAngle(v1, v2):
     k1 = (v1[0]['y'] - v1[1]['y']) / (v1[0]['x'] - v1[1]['x'] + 0.000001)
     k2 = (v2[0]['y'] - v2[1]['y']) / (v2[0]['x'] - v2[1]['x'] + 0.000001)
@@ -330,3 +366,48 @@ def detect(fileUrl,key,apiKey):
         result={'status': status, 'error':error}
         return result
 
+#porn detect
+
+SIZE = 150, 150
+THRESHOLD = 0.5
+
+
+def prepare_image(image):
+    if not image.mode == 'RGB':
+        image = image.convert(mode='RGB')
+    image.thumbnail(SIZE, Image.ANTIALIAS)
+    return image
+
+
+def get_ycbcr(image):
+    ret = []
+
+    def rgb2ycbcr(r, g, b):
+        return (
+            16 + (65.738 * r + 129.057 * g + 25.064 * b) / 256,
+            128 + (-37.945 * r - 74.494 * g + 112.439 * b) / 256,
+            128 + (112.439 * r - 94.154 * g - 18.285 * b) / 256
+        )
+
+    x, y = image.size
+    for i in range(0, x):
+        for j in range(0, y):
+            ret.append(rgb2ycbcr(*image.getpixel((i, j))))
+
+    return ret
+
+
+def detectPorn(image):
+
+    def judge(sample):
+        y, cb, cr = sample
+
+        return 80 <= cb <= 120 and 133 <= cr <= 173
+
+    image = prepare_image(image)
+    ycbcr = get_ycbcr(image)
+
+    judged = map(judge, ycbcr)
+
+    rating = float(judged.count(True)) / len(judged)
+    return rating > THRESHOLD, rating

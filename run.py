@@ -183,8 +183,10 @@ def cowboy():
 def face():
 
     if request.method == 'GET':
-        list = Face.query.order_by(Face.grade)[0:3]
-        print list
+        if len(Face.query.order_by(Face.grade).all())<3:
+            list = Face.query.order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
+        else:
+            list = Face.query.order_by(Face.grade.desc())[0:3]
         return render_template('face/faceIndex.html',list=list)
     if request.method == 'POST':
         key = app.config.get('FACE_KEY')
@@ -212,6 +214,15 @@ def face():
         else:
             return jsonify(status='failed',error=u'服务器出错，请稍后再试')
 
+@app.route("/robots.txt")
+def robots_txt():
+    return Response('User-agent: *'+ '\n'+'Allow: /')
+@app.route("/baidu_verify_5DVru9pOZg.html")
+def baidu_verify():
+    return Response('5DVru9pOZg')
+@app.route("/google538a02e0b0893d2d.html")
+def google_verify():
+    return Response('google-site-verification: google538a02e0b0893d2d.html')
 # admin
 admin.dashboard()
 
