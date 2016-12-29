@@ -177,21 +177,29 @@ class faceDetect(object):
                 rateDict[i] = rateDict[i] * 2
 
         score = abs(rateDict['rateBrowNoseChinLength']) + abs(rateDict['rateEyesWidth'] / 3) + abs(
-            rateDict['rateEyesHeight'] / 3) + abs(
-            rateDict['rateQuanHeWidth']) + abs(rateDict['rateChinMouthNoseLength']) + abs(
+            rateDict['rateEyesHeight'] / 3)  + abs(rateDict['rateChinMouthNoseLength']) + abs(
             rateDict['rateNoseWidthLength'])
         self.feelGrade = self.feelGrade+abs(rateDict['rateBrowNoseChinLength']) + abs(rateDict['rateEyesWidth'] / 3) + abs(
-            rateDict['rateEyesHeight'] / 3) + abs(rateDict['rateQuanHeWidth'])
+            rateDict['rateEyesHeight'] / 3)
         self.chinGrade = self.chinGrade + abs(rateDict['rateChinMouthNoseLength'])
         self.noseGrade = self.noseGrade+abs(
             rateDict['rateNoseWidthLength'])
+
+        if rateDict['rateEyesHeight']>0 and rateDict['rateEyesHeight']<0.3:
+            score = score - rateDict['rateQuanHeWidth']/3
+        elif rateDict['rateEyesHeight']<=0 and rateDict['rateEyesHeight']>-0.1:
+            score = score - rateDict['rateQuanHeWidth']/3
+        elif rateDict['rateEyesHeight']>=0.3:
+            score = score + rateDict['rateQuanHeWidth'] / 3
+        else:
+            score = score - rateDict['rateQuanHeWidth']
 
         if rateDict['rateLeftEyeFaceWidth'] < 0 and rateDict['rateRightEyeFaceWidth'] < 0:
             score = score + abs(rateDict['rateLeftEyeFaceWidth'] * 30) + abs(rateDict['rateRightEyeFaceWidth'] * 30)
             self.eyeGrade=self.eyeGrade+ abs(rateDict['rateLeftEyeFaceWidth'] * 30) + abs(rateDict['rateRightEyeFaceWidth'] * 30)
         else:
-            score = score + abs(rateDict['rateLeftEyeFaceWidth']) + abs(rateDict['rateRightEyeFaceWidth'])
-            self.eyeGrade = self.eyeGrade  + abs(rateDict['rateLeftEyeFaceWidth']) + abs(rateDict['rateRightEyeFaceWidth'])
+            score = score + abs(rateDict['rateLeftEyeFaceWidth']/30) + abs(rateDict['rateRightEyeFaceWidth']/30)
+            self.eyeGrade = self.eyeGrade  + abs(rateDict['rateLeftEyeFaceWidth']/30) + abs(rateDict['rateRightEyeFaceWidth']/30)
         # if rateDict['rateRightEyeFaceWidth']< 0:
         #     score = score + abs(rateDict['rateRightEyeFaceWidth'] * 30)
         # else:
@@ -204,19 +212,20 @@ class faceDetect(object):
             self.noseGrade=self.noseGrade+abs(rateDict['rateNoseFaceWidth'])
 
         if rateDict['rateEyesCenterMouthWidth'] < 0:
-            score = score + abs(rateDict['rateEyesCenterMouthWidth'] * 2.5)
-            self.mouthGrade = self.mouthGrade+abs(rateDict['rateEyesCenterMouthWidth'] * 2.5)
+            score = score + abs(rateDict['rateEyesCenterMouthWidth'] * 3.5)
+            self.mouthGrade = self.mouthGrade+abs(rateDict['rateEyesCenterMouthWidth'] * 3.5)
         else:
-            score = score + abs(rateDict['rateNoseFaceWidth'])
-            self.mouthGrade = self.mouthGrade+abs(rateDict['rateNoseFaceWidth'])
+            score = score + abs(rateDict['rateNoseFaceWidth']/2)
+            self.mouthGrade = self.mouthGrade+abs(rateDict['rateNoseFaceWidth']/2)
 
         if self.chinAngle>140:
             score = score+0.1
             self.chinGrade=self.chinGrade+0.1
         elif self.chinAngle<90:
             score = score + 0.06
-            self.chinGrade=self.chinGrade+0.06
-        print self.eyeGrade
+            self.chinGrade=self.chinGrade-0.03
+        ageGrade = (1.02**(self.age-18)-1) if self.age>=18 else 0
+        score = score+ageGrade
         self.feelGrade =200 / ((6 ** self.feelGrade  - 1 + 2))
         self.eyeGrade =200 / ((6 ** self.eyeGrade  - 1 + 2))
         self.noseGrade =200 / ((6 ** self.noseGrade  - 1 + 2))
@@ -228,14 +237,14 @@ class faceDetect(object):
         if not self.status:
             return 1
         if self.gender =='Male':
-            if self.age>25:
+            if self.age>30:
                 baseMessage = u'Hello,先生！'
             elif self.age<15:
                 baseMessage = u'Hello,小子！'
             else:
                 baseMessage = u'Hello,哥们儿！'
         else:
-            if self.age>25:
+            if self.age>30:
                 baseMessage = u'Hello,女士！'
             elif self.age<15:
                 baseMessage = u'Hello,小丫头！'
@@ -274,22 +283,61 @@ class faceDetect(object):
         notWanMei = [u'您的颜值还不错啦，您',u'您的颜值已经超越路人啦，您']
         chouLou = [u'是不是照片没选好，电脑分析您的颜值比较低哦，我本人是不信的！您',u'呃.......您',u'怎么和你形容呢....你']
         for i in rateDict:
-            print i
-            print rateDict[i]
-            if rateDict[i] > 0.1:
+            if i == 'rateBrowNoseChinLength' and abs(rateDict[i])>0.1:
                 isPerfact = False
-                weakPoint.append(messageDict[i][0])
-            elif rateDict[i] < -0.1:
+                if rateDict[i]>0.1:
+                    weakPoint.append(messageDict[i][0])
+                else:
+                    weakPoint.append(messageDict[i][2])
+            if i == 'rateEyesWidth' and abs(rateDict[i])>0.1:
                 isPerfact = False
-                weakPoint.append(messageDict[i][2])
+                if rateDict[i]>0.1:
+                    weakPoint.append(messageDict[i][0])
+                else:
+                    weakPoint.append(messageDict[i][2])
+            if i == 'rateEyesHeight' and abs(rateDict[i])>0.1:
+                isPerfact = False
+                if rateDict[i]>0.1:
+                    weakPoint.append(messageDict[i][0])
+                else:
+                    weakPoint.append(messageDict[i][2])
+            if i == 'rateNoseFaceWidth' and abs(rateDict[i])>0.1:
+                isPerfact = False
+                if rateDict[i]>0.1:
+                    weakPoint.append(messageDict[i][0])
+                else:
+                    weakPoint.append(messageDict[i][2])
+            if i == 'rateEyesCenterMouthWidth' and abs(rateDict[i])>0.1:
+                isPerfact = False
+                if rateDict[i]>0.1:
+                    weakPoint.append(messageDict[i][0])
+                else:
+                    weakPoint.append(messageDict[i][2])
+            if i == 'rateChinMouthNoseLength' and abs(rateDict[i])>0.1:
+                isPerfact = False
+                if rateDict[i]>0.1:
+                    weakPoint.append(messageDict[i][0])
+                else:
+                    weakPoint.append(messageDict[i][2])
+            if i == 'rateNoseWidthLength' and abs(rateDict[i])>0.1:
+                isPerfact = False
+                if rateDict[i]>0.1:
+                    weakPoint.append(messageDict[i][0])
+                else:
+                    weakPoint.append(messageDict[i][2])
             elif (i=='rateLeftEyeFaceWidth' or i=='rateRightEyeFaceWidth') and (rateDict[i]<-0.01) :
                 isPerfact = False
                 weakPoint.append(messageDict[i][2])
-            elif rateDict[i] < -0.1:
+
+            elif (i=='rateLeftEyeFaceWidth' or i=='rateRightEyeFaceWidth') and (rateDict[i]>0.01) :
+                goodPoint.append(messageDict[i][0])
+            elif i=='rateQuanHeWidth' and rateDict[i] < -0.1:
                 isPerfact = False
                 weakPoint.append(messageDict[i][2])
             else:
                 goodPoint.append(messageDict[i][1])
+
+
         if self.chinAngle<90:
             weakPoint.append(u'下巴太尖了，真的不是PS的吗')
         elif self.chinAngle>130:
@@ -299,7 +347,6 @@ class faceDetect(object):
 
         goodPoint = makeSentence(bingLie, goodPoint)
         weakPoint = makeSentence(bingLie, weakPoint)
-        print self.grade
         if isPerfact :
             comment = goodPoint
             baseMessage = baseMessage+wanMei[random.randint(0,len(wanMei)-1)]
@@ -348,23 +395,7 @@ def makeSentence(words, rawSentence):
     sentences = delEmptyAndUniq(rawSentence)
     return connectSentences(words, sentences)
 
-def detect(fileUrl,key,apiKey):
-    d=faceDetect(fileUrl,key,apiKey)
-    d.postData()
-    d.anayFace()
-    imgResult=d.showResult()
-    result ={}
-    if d.status:
-        grades = d.score()
-        comment = d.message()
-        status = d.status
-        result ={'status':status,'grades':grades,'imgResult':imgResult,'comment':comment,'gender':d.gender}
-        return result
-    else:
-        status = d.status
-        error = d.error
-        result={'status': status, 'error':error}
-        return result
+
 
 #porn detect
 
@@ -411,3 +442,21 @@ def detectPorn(image):
 
     rating = float(judged.count(True)) / len(judged)
     return rating > THRESHOLD, rating
+
+def detect(fileUrl,key,apiKey):
+    d=faceDetect(fileUrl,key,apiKey)
+    d.postData()
+    d.anayFace()
+    imgResult=d.showResult()
+    if d.status:
+        grades = d.score()
+        comment = d.message()
+        status = d.status
+        result ={'status':status,'grades':grades,'imgResult':imgResult,'comment':comment,'gender':d.gender}
+        return result
+    else:
+        status = d.status
+        error = d.error
+        result={'status': status, 'error':error}
+        return result
+

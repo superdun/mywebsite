@@ -97,17 +97,19 @@ class Face(db.Model):
     mouth = db.Column(db.String(120))
     chin = db.Column(db.String(120))
     feel = db.Column(db.String(120))
+    gender = db.Column(db.String(120))
     comment = db.Column(db.String(520))
     sourceImg = db.Column(db.String(120))
     resultImg = db.Column(db.String(120))
 
-    def __init__(self, grade=0, eye=0,mouth=0,chin=0,feel=0,nose=0,comment='',sourceImg='',resultImg=''):
+    def __init__(self, grade='0', eye='0',gender='Male',mouth='0',chin='0',feel='0',nose='0',comment='',sourceImg='',resultImg=''):
         self.grade = grade
         self.eye = eye
         self.mouth = mouth
         self.chin = chin
         self.feel = feel
         self.nose = nose
+        self.gender = gender
         self.comment = comment
         self.resultImg=resultImg
         self.sourceImg=sourceImg

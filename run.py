@@ -183,11 +183,16 @@ def cowboy():
 def face():
 
     if request.method == 'GET':
-        if len(Face.query.order_by(Face.grade).all())<3:
-            list = Face.query.order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
+        if len(Face.query.filter_by(gender='Male').order_by(Face.grade).all())<3:
+            listMale = Face.query.filter_by(gender='Male').order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
         else:
-            list = Face.query.order_by(Face.grade.desc())[0:3]
-        return render_template('face/faceIndex.html',list=list)
+            listMale =Face.query.filter_by(gender='Male').order_by(Face.grade.desc())[0:3]
+
+        if len(Face.query.filter_by(gender='Female').order_by(Face.grade).all())<3:
+            listFemale = Face.query.filter_by(gender='Female').order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
+        else:
+            listFemale = Face.query.filter_by(gender='Female').order_by(Face.grade.desc())[0:3]
+        return render_template('face/faceIndex.html',listMale=listMale,listFemale=listFemale)
     if request.method == 'POST':
         key = app.config.get('FACE_KEY')
         appKey = app.config.get('FACE_API_KEY')
@@ -204,7 +209,7 @@ def face():
                               mouth=round(detectResult['grades']['mouth'],3),chin=round(detectResult['grades']['chin'],3),
                               feel=round(detectResult['grades']['feel'],3),nose=round(detectResult['grades']['nose'],3),
                               comment=detectResult['comment'],sourceImg=sourceImg,
-                              resultImg=detectResult['imgResult']['localUrl'])
+                              resultImg=detectResult['imgResult']['localUrl'],gender=detectResult['gender'])
                 db.session.add(faceDB)
                 db.session.commit()
                 return jsonify(detectResult)

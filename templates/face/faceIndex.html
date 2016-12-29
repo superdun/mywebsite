@@ -11,80 +11,114 @@
 <body id="body">
 <div class="container">
     <div class="row">
-        <div class="col-md-3 col-sm-1"></div>
-        <div class="col-md-6 col-sm-10">
+        <div class="col-md-3 col-sm-1 col-xs-0"></div>
+        <div class="col-md-6 col-sm-10 col-xs-12">
             <!--<img src="{{url_for('static', filename='demos/face/head.jpg')}}" width="100%">-->
-            <h2>颜值测评 0.2 by Dun</h2>
+            <h2>颜值测评 0.2.1 by Dun</h2>
 
             <div class="alert alert-warning alert-dismissible fade in">
-                      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                        <strong>注意！</strong> <br>
-                        <ul>
-                            <li>
-                               此功能仅供娱乐，请勿当真，每张图片上请保证有且只有一张（人）脸
-                            </li>
-                            <li>
-                               如果你的颜值进入前三名，则会显示在页面上哦....
-                            </li>
-                            <li>
-                               <strong>千万不要上传一些不正经的图片</strong>，我会过滤的，哼！
-                            </li>
-                            <li>
-                               如果我不小心过滤失败了，不正经的图片又进了前三名，显示在了页面上，后果自负哦
-                            </li>
-                            <li>
-                               开发纯属个人爱好，使用face++免费接口，和极其廉价的服务器，所以请勿上传超过1.5M的图片
-                            </li>
-                            <li>
-                               也不要恶意多次上传，测测自己就好了，理由同上..
-                            </li>
-                            <li>
-                               很大的可能会失败，请多试几次，理由同上+1..
-                            </li>
-                            <li>
-                               如果一直失败，你有请按下列步骤解决（ 1.联系我，微信号：lajidun 2.给我发红包，我换更好的服务器 3. 搞定...）
-                            </li>
-                            <li>
-                               如你觉得我说的这些没法接受，关掉页面吧 T_T,<strong>千万不要上传一些不正经的图片!!</strong>
-                            </li>
-                        </ul>
-                <button type="button" data-dismiss="alert"><span aria-hidden="true">我知道了！</span><span class="sr-only">Close</span></button>
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span
+                        class="sr-only">Close</span></button>
+                <strong>注意！</strong> <br>
+                <ul>
+                    <li>
+                        更新日志：0.2.1：
+                        将帅哥美女三甲分开展示.
+                    </li>
+                    <li>
+                        此功能仅供娱乐，请勿当真，每张图片上请保证有且只有一张（人）脸
+                    </li>
+                    <li>
+                        如果你的颜值进入前三名，则会显示在页面上哦....
+                    </li>
+                    <li>
+                        <strong>千万不要上传一些不正经的图片</strong>，我会过滤的，哼！
+                    </li>
+                    <li>
+                        如果我不小心过滤失败了，不正经的图片又进了前三名，显示在了页面上，后果自负哦
+                    </li>
+                    <li>
+                        开发纯属个人爱好，使用face++免费接口，和极其廉价的服务器，所以请勿上传超过1.5M的图片
+                    </li>
+                    <li>
+                        也不要恶意多次上传，测测自己就好了，理由同上..
+                    </li>
+                    <li>
+                        很大的可能会失败，请多试几次，理由同上+1..
+                    </li>
+                    <li>
+                        如果一直失败，你有请按下列步骤解决（ 1.联系我，微信号：lajidun 2.给我发红包，我换更好的服务器 3. 搞定...）
+                    </li>
+                    <li>
+                        如你觉得我说的这些没法接受，关掉页面吧 T_T,<strong>千万不要上传一些不正经的图片!!</strong>
+                    </li>
+                </ul>
+                <button type="button" data-dismiss="alert"><span aria-hidden="true">我知道了！</span><span class="sr-only">Close</span>
+                </button>
             </div>
 
         </div>
-        <div class="col-md-3 col-sm-1"></div>
+        <div class="col-md-3 col-sm-1 col-xs-0"></div>
     </div>
     <div class="row">
-        <div class="col-md-3 col-sm-1"></div>
-        <div class="col-md-6 col-sm-10" id="imgContainer">
+        <div class="col-md-3 col-sm-1 col-xs-0"></div>
+        <div class="col-md-6 col-sm-10 col-xs-12" id="imgContainer">
             <label>请选择你想测的照片：</label>
             <input type="file" id="file_input" class="form-control">
             <div id="uploadContainer"></div>
         </div>
-        <div class="col-md-3 col-sm-1"></div>
+        <div class="col-md-3 col-sm-1 col-xs-0"></div>
 
     </div>
     <div class="row">
-        <div class="col-md-3 col-sm-1"></div>
-        <div class="col-md-6 col-sm-10">
+        <div class="col-md-3 col-sm-1 col-xs-0"></div>
+        <div class="col-md-6 col-sm-10 col-xs-12">
             <br>
             <button type="button" id="upload" data-loading-text="开始测评" class="btn btn-primary" autocomplete="off">
                 开始测评
             </button>
-            <h3>颜值三甲</h3>
-            <ul class="list-group">
-                {% for i in list %}
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-2 col-sm-2"><h1>{{loop.index}}.</h1></div>
-                        <div class="col-md-6 col-sm-6"><img src="{{ i['sourceImg'] }}" style="width:50%;"></div>
-                        <div class="col-md-4 col-sm-4"><h4>综合颜值：{{i['grade']}}分</h4></div>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <h3>帅哥三甲</h3>
+                    <ul class="list-group">
+                        {% for i in listMale %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-2 col-sm-2 col-xs-1"><h3>{{loop.index}}.</h3></div>
+                                <div class="col-md-10 col-sm-10 col-xs-11">
+                                    <img src="{{ i['sourceImg'] }}" style="width:80%;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 col-sm-2 col-xs-1"></div>
+                                <div class="col-md-10 col-sm-10 col-xs-11">综合颜值：{{i['grade']}}分</div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <h3>美女三甲</h3>
+                    <ul class="list-group">
+                        {% for j in listFemale %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-2 col-sm-2 col-xs-1"><h3>{{loop.index}}.</h3></div>
+                                <div class="col-md-10 col-sm-10 col-xs-11">
+                                    <img src="{{ j['sourceImg'] }}" style="width:80%;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 col-sm-2 col-xs-1"></div>
+                                <div class="col-md-10 col-sm-10 col-xs-11">综合颜值：{{j['grade']}}分</div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3 col-sm-1"></div>
+        <div class="col-md-3 col-sm-1 col-xs-0"></div>
 
     </div>
 
@@ -258,6 +292,10 @@ window.onload = function(){
             })
         })
     }
+
+
+
+
 
 
 
