@@ -24,6 +24,8 @@
                     <li>
                         更新日志：0.2.1：
                         将帅哥美女三甲分开展示.
+                        修改了一些权重值
+                        一些细节优化
                     </li>
                     <li>
                         此功能仅供娱乐，请勿当真，每张图片上请保证有且只有一张（人）脸
@@ -77,47 +79,111 @@
             <button type="button" id="upload" data-loading-text="开始测评" class="btn btn-primary" autocomplete="off">
                 开始测评
             </button>
+            <hr>
             <div class="row">
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                    <h3>帅哥三甲</h3>
-                    <ul class="list-group">
-                        {% for i in listMale %}
-                        <li class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-2 col-sm-2 col-xs-1"><h3>{{loop.index}}.</h3></div>
-                                <div class="col-md-10 col-sm-10 col-xs-11">
-                                    <img src="{{ i['sourceImg'] }}" style="width:80%;">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingOne">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                                       aria-expanded="true" aria-controls="collapseOne">
+                                        <span class="caret"></span>      帅哥三甲
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingOne">
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        {% for i in listMale %}
+                                        <li class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-md-2 col-sm-2 col-xs-1"><h3>{{loop.index}}.</h3></div>
+                                                <div class="col-md-10 col-sm-10 col-xs-11">
+                                                    <img src="{{ i['sourceImg'] }}" style="width:80%;">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2 col-sm-2 col-xs-1"></div>
+                                                <div class="col-md-10 col-sm-10 col-xs-11">综合颜值：{{i['grade']}}分</div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-2 col-sm-2 col-xs-1"></div>
-                                <div class="col-md-10 col-sm-10 col-xs-11">综合颜值：{{i['grade']}}分</div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingTwo">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
+                                       href="#collapseTwo"
+                                       aria-expanded="false" aria-controls="collapseTwo">
+                                        <span class="caret"></span>     美女三甲
+                                    </a>
+                                </h4>
                             </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                    <h3>美女三甲</h3>
-                    <ul class="list-group">
-                        {% for j in listFemale %}
-                        <li class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-2 col-sm-2 col-xs-1"><h3>{{loop.index}}.</h3></div>
-                                <div class="col-md-10 col-sm-10 col-xs-11">
-                                    <img src="{{ j['sourceImg'] }}" style="width:80%;">
+                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingTwo">
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        {% for j in listFemale %}
+                                        <li class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-md-2 col-sm-2 col-xs-1"><h3>{{loop.index}}.</h3></div>
+                                                <div class="col-md-10 col-sm-10 col-xs-11">
+                                                    <img src="{{ j['sourceImg'] }}" style="width:80%;">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2 col-sm-2 col-xs-1"></div>
+                                                <div class="col-md-10 col-sm-10 col-xs-11">综合颜值：{{j['grade']}}分</div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-2 col-sm-2 col-xs-1"></div>
-                                <div class="col-md-10 col-sm-10 col-xs-11">综合颜值：{{j['grade']}}分</div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingThree">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion"
+                                       href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        <span class="caret"></span>     可爱宝宝    <span class="label label-danger">new!</span>
+                                    </a>
+                                </h4>
                             </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingThree">
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        {% for k in listBaby %}
+                                        <li class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-md-2 col-sm-2 col-xs-1"><h3>{{loop.index}}.</h3></div>
+                                                <div class="col-md-10 col-sm-10 col-xs-11">
+                                                    <img src="{{ k['sourceImg'] }}" style="width:80%;">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2 col-sm-2 col-xs-1"></div>
+                                                <div class="col-md-10 col-sm-10 col-xs-11">可爱值：{{100-(400/k['grade']|int)|round(3)}}分</div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+                <div class="col-md-6 col-sm-6 col-xs-6">
+
+                </div>
         <div class="col-md-3 col-sm-1 col-xs-0"></div>
 
     </div>
@@ -185,8 +251,8 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="width:30%;">
-                                    综合评分：
+                                <td style="width:30%;" font>
+                                    <p style="color:red;">综合评分：</p>
                                 </td>
                                 <td id="grade">
 
@@ -260,24 +326,25 @@ window.onload = function(){
                         $('#panel').attr('class','panel panel-primary')
                         $('.panel-heading').text('测评报告')
                         $('#error-container').css('visibility','hidden')
-                        $('#result-table').css('visibility','visible')
+                        $('#result-table').css('display','block')
                         var grades = data['grades']
                         $('#eye').text(grades['eye'])
                         $('#mouth').text(grades['mouth'])
                         $('#nose').text(grades['nose'])
                         $('#chin').text(grades['chin'])
                         $('#feel').text(grades['feel'])
-                        $('#grade').text(grades['grade'])
+                        $('#grade').html('<p style="color:red;">'+grades['grade']+'</p>')
                         $('#comment').text(data['comment'])
                         $('#sourceImg').attr('src',data['sourceImg'])
                         $('#resultImg').attr('src',data['imgResult']['localUrl'])
                         $('#upload').removeAttr('disabled')
+
                     }
                     else{
                         $('#panel').attr('class','panel panel-danger')
                         $('.panel-heading').text('错误！')
                         $('#error-container').css('visibility','visible')
-                        $('#result-table').css('visibility','hidden')
+                        $('#result-table').css('display','none')
                         $('#error-message').text(data['error'])
                         $('#upload').removeAttr('disabled')
 
@@ -292,6 +359,9 @@ window.onload = function(){
             })
         })
     }
+
+
+
 
 
 

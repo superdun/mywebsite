@@ -192,7 +192,12 @@ def face():
             listFemale = Face.query.filter_by(gender='Female').order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
         else:
             listFemale = Face.query.filter_by(gender='Female').order_by(Face.grade.desc())[0:3]
-        return render_template('face/faceIndex.html',listMale=listMale,listFemale=listFemale)
+
+        if len(Face.query.filter(Face.age <= 13,Face.age > 0).order_by(Face.grade).all())<3:
+            listBaby = Face.query.filter(Face.age <= 13,Face.age > 0).order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
+        else:
+            listBaby = Face.query.filter(Face.age <= 13,Face.age > 0).order_by(Face.grade.desc())[0:3]
+        return render_template('face/faceIndex.html',listMale=listMale,listFemale=listFemale,listBaby=listBaby)
     if request.method == 'POST':
         key = app.config.get('FACE_KEY')
         appKey = app.config.get('FACE_API_KEY')
@@ -209,7 +214,7 @@ def face():
                               mouth=round(detectResult['grades']['mouth'],3),chin=round(detectResult['grades']['chin'],3),
                               feel=round(detectResult['grades']['feel'],3),nose=round(detectResult['grades']['nose'],3),
                               comment=detectResult['comment'],sourceImg=sourceImg,
-                              resultImg=detectResult['imgResult']['localUrl'],gender=detectResult['gender'])
+                              resultImg=detectResult['imgResult']['localUrl'],gender=detectResult['gender'],age=detectResult['age'])
                 db.session.add(faceDB)
                 db.session.commit()
                 return jsonify(detectResult)

@@ -7,6 +7,7 @@ app.config.from_object('config')
 app.config.from_pyfile('localConfig.py')
 db = SQLAlchemy(app)
 
+
 # db
 
 
@@ -17,12 +18,11 @@ class Message(db.Model):
     mobile = db.Column(db.String(120))
     update_time = db.Column(db.String(120))
 
-    def __init__(self, name='', goal='', password='',mobile='',update_time=''):
+    def __init__(self, name='', goal='', password='', mobile='', update_time=''):
         self.name = name
         self.goal = goal
         self.mobile = mobile
-        self.update_time = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time()))
-
+        self.update_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -41,6 +41,8 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.name
+
+
 # Flask-Admin can't create model if it has constructor with non-default parameters
 
 
@@ -58,7 +60,8 @@ class Post(db.Model):
     status = db.Column(db.String(120))
     is_full = db.Column(db.String(120))
 
-    def __init__(self, title='', content='', img='', view_count=0, summary='', category='', book_count=0, max_book_count=0, status='', is_full='no'):
+    def __init__(self, title='', content='', img='', view_count=0, summary='', category='', book_count=0,
+                 max_book_count=0, status='', is_full='no'):
         self.title = title
         self.content = content
         self.create_at = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
@@ -89,6 +92,7 @@ class Carousel(db.Model):
     def __repr__(self):
         return '<Carousel %r>' % self.title
 
+
 class Face(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grade = db.Column(db.String(120))
@@ -98,21 +102,24 @@ class Face(db.Model):
     chin = db.Column(db.String(120))
     feel = db.Column(db.String(120))
     gender = db.Column(db.String(120))
+    age = db.Column(db.Integer)
     comment = db.Column(db.String(520))
     sourceImg = db.Column(db.String(120))
     resultImg = db.Column(db.String(120))
 
-    def __init__(self, grade='0', eye='0',gender='Male',mouth='0',chin='0',feel='0',nose='0',comment='',sourceImg='',resultImg=''):
+    def __init__(self, grade='0', age=0, eye='0', gender='Male', mouth='0', chin='0', feel='0', nose='0', comment='',
+                 sourceImg='', resultImg=''):
         self.grade = grade
         self.eye = eye
         self.mouth = mouth
         self.chin = chin
         self.feel = feel
         self.nose = nose
+        self.age = age
         self.gender = gender
         self.comment = comment
-        self.resultImg=resultImg
-        self.sourceImg=sourceImg
+        self.resultImg = resultImg
+        self.sourceImg = sourceImg
 
     def __repr__(self):
         return '<Face %r>' % self.grade
