@@ -30,3 +30,5 @@ TULING_SECRET = "96b0292589c89729"
 
 FACE_KEY = "ZfZkvZVgtmq023KgiYjj8zYp-eGmG-wJ"
 FACE_API_KEY = "F2pl2jjyeTtSFPIllQ-MCF9HT2DPqRv5"
+#REDIS_URL = "redis://superdun:1786e7e78a4cc86cba72c38edf4fc33f@50.30.35.9:3616/"
+REDIS_URL ='redis://@127.0.0.1:6379/'

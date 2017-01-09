@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, url_for, jsonify, request, Response, redirect
-from moduleMail import mail
-from flask_bootstrap import Bootstrap
-from dbORM import db, User, Post, Carousel, Message,Face
+from flask import Flask, render_template, url_for, jsonify, request, Response, redirect, session
+from dbORM import db, User, Post, Carousel, Message, Face
 import thumb
-from moduleGlobal import app, bootstrap, qiniu_store, QINIU_DOMAIN, CATEGORY, UPLOAD_URL
+from moduleGlobal import app, qiniu_store, QINIU_DOMAIN, CATEGORY, UPLOAD_URL, redis_store
 import moduleAdmin as admin
 import flask_login
-import os
-import os.path as op
 from moduleWechat import wechat_resp
 from werkzeug import secure_filename
 from faceModule import detect
-#debug in wsgi
+from chatroomModule import socket, makeRoomNumber
+
+# debug in wsgi
 # from werkzeug.debug import DebuggedApplication
 
 # app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
@@ -72,7 +70,8 @@ def apply_ajax():
 
 @app.route('/joinus')
 def joinin():  # ajax....
-    if request.args.get('name') and request.args.get('phone').isdigit() and app.config.get('BASE_URL') in request.url_root:
+    if request.args.get('name') and request.args.get('phone').isdigit() and app.config.get(
+            'BASE_URL') in request.url_root:
         name = request.args.get('name')
         goal = request.args.get('goal')
         mobile = request.args.get('phone')
@@ -85,6 +84,7 @@ def joinin():  # ajax....
         return jsonify(status='OK', result=u'欢迎你!!  ' + request.args.get('name') + u'  你的信息已经提交，我们会尽快联系你')
     else:
         return jsonify(status='NO', result=u'请正确完整输入个人信息！')
+
 
 # post
 
@@ -125,6 +125,7 @@ def upload():
     file = request.files.to_dict()['files[]']
     result = thumb.upload_file(file, UPLOAD_URL, QINIU_DOMAIN, qiniu_store)
     return jsonify(result)
+
 
 # personal
 
@@ -181,23 +182,25 @@ def cowboy():
 
 @app.route('/face', methods=['GET', 'POST'])
 def face():
-
     if request.method == 'GET':
-        if len(Face.query.filter_by(gender='Male').order_by(Face.grade).all())<3:
-            listMale = Face.query.filter_by(gender='Male').order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
+        if len(Face.query.filter_by(gender='Male').order_by(Face.grade).all()) < 3:
+            listMale = Face.query.filter_by(gender='Male').order_by(Face.grade.desc())[
+                       0:len(Face.query.order_by(Face.grade).all())]
         else:
-            listMale =Face.query.filter_by(gender='Male').order_by(Face.grade.desc())[0:3]
+            listMale = Face.query.filter_by(gender='Male').order_by(Face.grade.desc())[0:3]
 
-        if len(Face.query.filter_by(gender='Female').order_by(Face.grade).all())<3:
-            listFemale = Face.query.filter_by(gender='Female').order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
+        if len(Face.query.filter_by(gender='Female').order_by(Face.grade).all()) < 3:
+            listFemale = Face.query.filter_by(gender='Female').order_by(Face.grade.desc())[
+                         0:len(Face.query.order_by(Face.grade).all())]
         else:
             listFemale = Face.query.filter_by(gender='Female').order_by(Face.grade.desc())[0:3]
 
-        if len(Face.query.filter(Face.age <= 13,Face.age > 0).order_by(Face.grade).all())<3:
-            listBaby = Face.query.filter(Face.age <= 13,Face.age > 0).order_by(Face.grade.desc())[0:len(Face.query.order_by(Face.grade).all())]
+        if len(Face.query.filter(Face.age <= 13, Face.age > 0).order_by(Face.grade).all()) < 3:
+            listBaby = Face.query.filter(Face.age <= 13, Face.age > 0).order_by(Face.grade.desc())[
+                       0:len(Face.query.order_by(Face.grade).all())]
         else:
-            listBaby = Face.query.filter(Face.age <= 13,Face.age > 0).order_by(Face.grade.desc())[0:3]
-        return render_template('face/faceIndex.html',listMale=listMale,listFemale=listFemale,listBaby=listBaby)
+            listBaby = Face.query.filter(Face.age <= 13, Face.age > 0).order_by(Face.grade.desc())[0:3]
+        return render_template('face/faceIndex.html', listMale=listMale, listFemale=listFemale, listBaby=listBaby)
     if request.method == 'POST':
         key = app.config.get('FACE_KEY')
         appKey = app.config.get('FACE_API_KEY')
@@ -208,13 +211,17 @@ def face():
             detectResult = detect(sourceImg, key, appKey)
             print detectResult
             if detectResult['status']:
-                detectResult['status']='ok'
+                detectResult['status'] = 'ok'
                 detectResult['sourceImg'] = sourceImg
-                faceDB = Face(grade=round(detectResult['grades']['grade'],3), eye=round(detectResult['grades']['eye'],3),
-                              mouth=round(detectResult['grades']['mouth'],3),chin=round(detectResult['grades']['chin'],3),
-                              feel=round(detectResult['grades']['feel'],3),nose=round(detectResult['grades']['nose'],3),
-                              comment=detectResult['comment'],sourceImg=sourceImg,
-                              resultImg=detectResult['imgResult']['localUrl'],gender=detectResult['gender'],age=detectResult['age'])
+                faceDB = Face(grade=round(detectResult['grades']['grade'], 3),
+                              eye=round(detectResult['grades']['eye'], 3),
+                              mouth=round(detectResult['grades']['mouth'], 3),
+                              chin=round(detectResult['grades']['chin'], 3),
+                              feel=round(detectResult['grades']['feel'], 3),
+                              nose=round(detectResult['grades']['nose'], 3),
+                              comment=detectResult['comment'], sourceImg=sourceImg,
+                              resultImg=detectResult['imgResult']['localUrl'], gender=detectResult['gender'],
+                              age=detectResult['age'])
                 db.session.add(faceDB)
                 db.session.commit()
                 return jsonify(detectResult)
@@ -222,17 +229,57 @@ def face():
                 detectResult['status'] = 'failed'
                 return jsonify(detectResult)
         else:
-            return jsonify(status='failed',error=u'服务器出错，请稍后再试')
+            return jsonify(status='failed', error=u'服务器出错，请稍后再试')
+
+
+@app.route('/randomchat', methods=['GET', 'POST'])
+def randomChat():
+
+    waitingRoom = redis_store.get('waitingRoom')
+
+    if not waitingRoom or waitingRoom == '':
+
+        room = makeRoomNumber()
+        session['room'] = room
+        session['name'] = 'A'
+        redis_store.set('waitingRoom', '%s:A' % room)
+        return render_template('randomchat/chat.html', room=room, name='A')
+
+    else:
+
+        roomInform = waitingRoom.split(':')
+        room = roomInform[0]
+        if roomInform[1] == 'B':
+            name = 'A'
+        else:
+            name = 'B'
+        session['room'] = room
+        session['name'] = name
+        redis_store.set('waitingRoom', '')
+        redis_store.set(room, "{\"A\":{\"count\":0,\"detail\":\"\"},\"B\":{\"count\":0,\"detail\":\"\"}}")
+        return render_template('randomchat/chat.html', room=room, name=name)
+
+@app.route('/randomchat/index')
+def randomChatIndex():
+    if request.args.get('room', '')==redis_store.get('waitingRoom').split(':')[0]:
+        redis_store.set('waitingRoom', '')
+    return redirect(url_for('randomChat'))
 
 @app.route("/robots.txt")
 def robots_txt():
-    return Response('User-agent: *'+ '\n'+'Allow: /')
+    return Response('User-agent: *' + '\n' + 'Allow: /')
+
+
 @app.route("/baidu_verify_5DVru9pOZg.html")
 def baidu_verify():
     return Response('5DVru9pOZg')
+
+
 @app.route("/google538a02e0b0893d2d.html")
 def google_verify():
     return Response('google-site-verification: google538a02e0b0893d2d.html')
+
+
 # admin
 admin.dashboard()
 
@@ -279,7 +326,7 @@ def request_loader(request):
     # DO NOT ever store passwords in plaintext and always compare password
     # hashes using constant-time comparison!
     user.is_authenticated = request.form[
-        'password'] == users[email]['password']
+                                'password'] == users[email]['password']
 
     return user
 
@@ -311,6 +358,8 @@ def protected():
 def logout():
     flask_login.logout_user()
     return 'Logged out'
+
+
 app.debug = True
 if __name__ == '__main__':
-    app.run()
+    socket.run(app)

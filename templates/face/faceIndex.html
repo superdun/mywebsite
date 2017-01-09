@@ -344,7 +344,51 @@ window.onload = function(){
                         $('#panel').attr('class','panel panel-danger')
                         $('.panel-heading').text('错误！')
                         $('#error-container').css('visibility','visible')
-                        $('#result-table').css('display','none')
+                        $('#result-table')            <div class="alert alert-warning alert-dismissible fade in">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span
+                        class="sr-only">Close</span></button>
+                <strong>注意！</strong> <br>
+                <ul>
+                    <li>
+                        更新日志：0.2.1：
+                        将帅哥美女三甲分开展示.
+                        修改了一些权重值
+                        一些细节优化
+                    </li>
+                    <li>
+                        此功能仅供娱乐，请勿当真，每张图片上请保证有且只有一张（人）脸
+                    </li>
+                    <li>
+                        如果你的颜值进入前三名，则会显示在页面上哦....
+                    </li>
+                    <li>
+                        <strong>千万不要上传一些不正经的图片</strong>，我会过滤的，哼！
+                    </li>
+                    <li>
+                        如果我不小心过滤失败了，不正经的图片又进了前三名，显示在了页面上，后果自负哦
+                    </li>
+                    <li>
+                        开发纯属个人爱好，使用face++免费接口，和极其廉价的服务器，所以请勿上传超过1.5M的图片
+                    </li>
+                    <li>
+                        也不要恶意多次上传，测测自己就好了，理由同上..
+                    </li>
+                    <li>
+                        很大的可能会失败，请多试几次，理由同上+1..
+                    </li>
+                    <li>
+                        如果一直失败，你有请按下列步骤解决（ 1.联系我，微信号：lajidun 2.给我发红包，我换更好的服务器 3. 搞定...）
+                    </li>
+                    <li>
+                        如你觉得我说的这些没法接受，关掉页面吧 T_T,<strong>千万不要上传一些不正经的图片!!</strong>
+                    </li>
+                </ul>
+                <button type="button" data-dismiss="alert"><span aria-hidden="true">我知道了！</span><span class="sr-only">Close</span>
+                </button>
+            </div>
+
+        </div>
+
                         $('#error-message').text(data['error'])
                         $('#upload').removeAttr('disabled')
 
