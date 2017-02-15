@@ -119,6 +119,21 @@ def iot_bath_temp():
     return wechat_resp(token, appid, appsecret,
                        encoding_aes_key, encrypt_mode, signature, timestamp, nonce, body_text)
 
+@app.route('/wechat', methods=['GET', 'POST'])
+def wechat():
+    token = app.config.get('WECHAT_TOKEN')
+    appid = app.config.get('WECHAT_APPID')
+    appsecret = app.config.get('WECHAT_APPSECRET')
+    encoding_aes_key = app.config.get('WECHAT_AESKEY')
+    encrypt_mode = app.config.get('WECHAT_ENC_MODE')
+    signature = request.args.get('signature')
+    timestamp = request.args.get('timestamp')
+    nonce = request.args.get('nonce')
+    print request.args.get('echostr')
+    body_text = request.data
+    return request.args.get('echostr')
+    # return wechat_resp(token, appid, appsecret,
+    #                    encoding_aes_key, encrypt_mode, signature, timestamp, nonce, body_text)
 
 @app.route('/admin/upload', methods=['POST'])
 def upload():
@@ -261,6 +276,12 @@ def randomChat():
 
 @app.route('/randomchat/index')
 def randomChatIndex():
+    if request.args.get('room', '')==redis_store.get('waitingRoom').split(':')[0]:
+        redis_store.set('waitingRoom', '')
+    return redirect(url_for('randomChat'))
+
+@app.route('/randomchat/getinform')
+def getChatInform():
     if request.args.get('room', '')==redis_store.get('waitingRoom').split(':')[0]:
         redis_store.set('waitingRoom', '')
     return redirect(url_for('randomChat'))

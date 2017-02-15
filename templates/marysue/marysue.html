@@ -1,51 +1,140 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Mary Sue Name</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no"/>
+    <link href="{{url_for('static', filename='css/WeUI.css')}}" rel="stylesheet">
 
-<style>
-    #css3{background:url({{url_for('static', filename='demos/marysue/desk.jpg')}}) no-repeat center top;background-size:cover}
-</style>
+    <title>欢迎使用玛丽苏起名器</title>
+
 </head>
 <body>
 <div>
-<table id="css3">
-<tr>
-<td>姓什么：</td>
-<td><input id="xing" type="text" autofocus></td>
-</tr>
+    <div id='wx_logo' style='margin:0 auto;display:none;'>
+<img src="{{url_for('static', filename='demos/marysue/weimg.png')}}" />
+</div>
+    <div class="container" id="container">
+        <div class="page__hd">
+            <h1 class="page__title">玛丽苏起名</h1>
+        </div>
+        <div class="page__bd">
+            <div class="weui-cells__title">姓名</div>
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">姓什么：</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" placeholder="请输入尊贵的姓" id="xing">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">叫什么：</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="text" placeholder="请输入尊贵的名" id="ming">
+                    </div>
+                </div>
+            </div>
+            <div class="weui-cells__title">性别</div>
+            <div class="weui-cells weui-cells_radio">
+                <label class="weui-cell weui-check__label" for="x11">
+                    <div class="weui-cell__bd">
+                        <p>汉子</p>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <input type="radio" class="weui-check" name="radio1" id="x11" value="male">
+                        <span class="weui-icon-checked"></span>
+                    </div>
+                </label>
+                <label class="weui-cell weui-check__label" for="x12">
 
-<tr>
-<td>叫什么：</td>
-<td><input id="ming" type="text">
-</td>
-</tr>
+                    <div class="weui-cell__bd">
+                        <p>妹纸</p>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <input type="radio" name="radio1" class="weui-check" id="x12" checked="checked" value="female">
+                        <span class="weui-icon-checked"></span>
+                    </div>
+                </label>
+                <label class="weui-cell weui-check__label" for="x13">
 
-<tr>
-<td>选择性别：</td>
-<td>
-<select id="xingbie">
-<option value="male">汉子</option>
-<option value="female">妹纸</option>
-<option value="nomatter">都行</option>
-</select>
-</td>
-</tr>
+                    <div class="weui-cell__bd">
+                        <p>都行</p>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <input type="radio" name="radio1" class="weui-check" id="x13" value="nomatter">
+                        <span class="weui-icon-checked"></span>
+                    </div>
+                </label>
 
-<tr>
-<td>生成长度：</td>
-<td><input id="length" type="range" min="3" max="7">
-</td><td><div id="shuzi"></div></td>
-</tr>
-<td></td>
-<td><input id="qiming" type="button" value="开始起名！" onClick="start()"></td>
-</table>
-<hr>
-<table><tr id="tr1"></tr>
-<tr id="tr2"></tr>
-</table>
+            </div>
+            <div class="weui-cells__title">生成长度</div>
+
+            <div class="weui-slider-box" id="slider1">
+                <div class="weui-slider">
+                    <div id="sliderInner" class="weui-slider__inner">
+                        <div id="sliderTrack" style="width: 50%;" class="weui-slider__track"></div>
+                        <div id="sliderHandler" style="left: 50%;" class="weui-slider__handler"></div>
+                    </div>
+                </div>
+                <div id="sliderValue" class="weui-slider-box__value">50</div>
+            </div>
+            <div class="weui-btn-area">
+                <a href="javascript:start();" class="weui-btn weui-btn_primary">起名！</a>
+            </div>
+        </div>
+    </div>
+    <!--<table id="css3">-->
+    <!--<tr>-->
+    <!--<td>姓什么：</td>-->
+    <!--<td><input id="xing" type="text" autofocus></td>-->
+    <!--</tr>-->
+
+    <!--<tr>-->
+    <!--<td>叫什么：</td>-->
+    <!--<td><input id="ming" type="text">-->
+    <!--</td>-->
+    <!--</tr>-->
+
+    <!--<tr>-->
+    <!--<td>选择性别：</td>-->
+    <!--<td>-->
+    <!--<select id="xingbie">-->
+    <!--<option value="male">汉子</option>-->
+    <!--<option value="female">妹纸</option>-->
+    <!--<option value="nomatter">都行</option>-->
+    <!--</select>-->
+    <!--</td>-->
+    <!--</tr>-->
+
+    <!--<tr>-->
+    <!--<td>生成长度：</td>-->
+    <!--<td><input id="length" type="range" min="3" max="7">-->
+    <!--</td>-->
+    <!--<td>-->
+    <!--<div id="shuzi"></div>-->
+    <!--</td>-->
+    <!--</tr>-->
+    <!--<td></td>-->
+    <!--<td><input id="qiming" type="button" value="开始起名！" onClick="start()"></td>-->
+    <!--</table>-->
+    <hr>
+    <table>
+        <tr id="tr1"></tr>
+        <tr id="tr2"></tr>
+    </table>
 </div>
 </body>
+<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/WeUI.js')}}"></script>
+<script>
+weui.slider('#slider1',   {step: 25,
+    defaultValue: 50,
+    onChange: function(percent){
+        $('#sliderValue').text(4*percent/100+3)
+        }
+    })
+
+
+
+</script>
 <script>{% include 'marysue/mary.js' %}</script>
 </html>

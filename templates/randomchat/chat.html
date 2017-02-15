@@ -2,172 +2,155 @@
 <head>
     <title>♥华理随机聊♥</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no"/>
+    <link href="{{url_for('static', filename='css/WeUI.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
-    <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='demos/randomchat/user.css')}}" rel="stylesheet">
+
+
 </head>
 <body>
 
-<div class="container-fluid">
 
+<!--<button class="btn btn-primary" type="button" id="haveDate">-->
+<!--交换号码-->
+<!--</button>-->
 
-    <div class="row">
-        <div class="col-md-3 col-sm-0 col-xs-0">
-
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-            <h3>♥华理随机聊♥
-                <button class="btn btn-primary" type="button" id="haveDate">
-                    交换号码
-                </button>
-            </h3>
-            <hr>
-        </div>
-        <div class="col-md-3 col-sm-0 col-xs-0">
-
-        </div>
+<div id='chatTab' class="weui-tab__content">
+    <div class="weui-cells__title" id="status" onclick="javascript:location.href='/randomchat/index?room={{room}}'">
+        ♥华理随机聊♥
     </div>
-    <div class="row">
-        <div class="col-md-3 col-sm-0 col-xs-0">
 
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12" id="status">
+    <!--<div class="alert alert-warning alert-dismissible fade in" id="dateStatusContainer">-->
+    <!--<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span-->
+    <!--class="sr-only">Close</span></button>-->
+    <!--<p id="dateStatus"></p>-->
+    <!--<button type="button" data-dismiss="alert"><span aria-hidden="true">我知道了！</span><span-->
+    <!--class="sr-only">Close</span>-->
+    <!--</button>-->
+    <!--</div>-->
 
-        </div>
-        <div class="col-md-3 col-sm-0 col-xs-0">
-
-        </div>
-    </div>
-    <div class="row" id="dateStatusRow">
-        <div class="col-md-3 col-sm-0 col-xs-0">
-
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12" >
-            <div class="alert alert-warning alert-dismissible fade in" id="dateStatusContainer">
-                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span
-                        class="sr-only">Close</span></button>
-                <p id="dateStatus"></p>
-                <button type="button" data-dismiss="alert"><span aria-hidden="true">我知道了！</span><span class="sr-only">Close</span>
-                </button>
-            </div>
-
-        </div>
-
-    </div>
-    <div class="col-md-3 col-sm-0 col-xs-0">
-
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-3 col-sm-0 col-xs-0">
-
-    </div>
-    <div class="col-md-6 col-sm-12 col-xs-12">
+    <div class="weui-cells">
         <div id="chat" rows="20"></div>
     </div>
-    <div class="col-md-3 col-sm-0 col-xs-0">
 
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-3 col-sm-0 col-xs-0">
-
-    </div>
-    <div class="col-md-6 col-sm-12 col-xs-12">
-        <input id="text" placeholder="Enter your message here" class="form-control">
-
-    </div>
-    <div class="col-md-3 col-sm-0 col-xs-0">
-
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-3 col-sm-0 col-xs-0">
-
-    </div>
-    <div class="col-md-6 col-sm-12 col-xs-12">
-        <button class="btn btn-primary" type="button" id="inputText"><span
-                class="glyphicon glyphicon-comment"></span> Send
-        </button>
-    </div>
-
-</div>
-<div class="col-md-3 col-sm-0 col-xs-0">
-
-</div>
-</div>
-<div class="modal fade" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <h4 class="modal-title">填入联系方式</h4>
+    <div class="weui-cells">
+        <div class="weui-cell__bd">
+            <div class="weui-flex">
+                <div class="weui-flex__item">
+                    <div class="placeholder">
+                        <textarea class="weui-textarea" placeholder="请输入文本" rows="3" id="text" data-emojiable="true"></textarea>
+                    </div>
+                </div>
+                <div id="menu">
+                    <div class="placeholder"><i class="glyphicon glyphicon-plus-sign" id="dateIcon"></i></div>
+                </div>
             </div>
-            <div class="modal-body">
-                <form class="form-horizontal">
-                    <fieldset>
-                        <div class="control-group">
+        </div>
+    </div>
+    <div class="weui-btn-area">
+        <div>
+            <a class="weui-btn weui-btn_primary" id="inputText">发送</a>
 
-                            <!-- Text input-->
-                            <label class="control-label" for="realName">姓名</label>
-                            <div class="controls">
-                                <input type="text" class="input-xlarge" id="realName">
-                            </div>
-                        </div>
-                        <hr>
-
-                        <div class="control-group">
-
-                            <!-- Text input-->
-                            <label class="control-label" for="phone">手机</label>
-                            <div class="controls">
-                                <input type="text" class="input-xlarge" id="phone">
-                            </div>
-                        </div>
-
-                    </fieldset>
-                </form>
+        </div>
+    </div>
+</div>
+<div class="weui-tab__content" id="dateTab">
+    <div id="form">
+        <div class="weui-cells">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">姓名</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="tel" required="" minlength="1"
+                           maxlength="15" placeholder="输入你的称呼" emptytips="请输入你的称呼" id="realName">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">手机号</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="tel" required="" pattern="^\d{11}$"
+                           maxlength="11" placeholder="输入你现在的手机号" emptytips="请输入手机号"
+                           notmatchtips="请输入正确的手机号" id="phone">
+                </div>
 
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="submitInform">确认</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+        <div class="weui-btn-area"><a id="submitInform" class="weui-btn weui-btn_primary">提交</a>
+        </div>
+        <div class="weui-btn-area"><a id="cancelSubmit" class="weui-btn weui-btn_default">取消</a>
+        </div>
+    </div>
+</div>
+
 <script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
-<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/WeUI.js')}}"></script>
 <script type="text/javascript" src="{{url_for('static', filename='demos/randomchat/socket.io.min.js')}}"></script>
-
 <script type="text/javascript" charset="utf-8">
             var socket;
             $('#chat').html('');
+            var dateFuncStatus = 1;
             var showMsg = function(name,msg){
                 if(name=='{{name}}'){
-                    $('#chat').append("<div class='row '><div class='col-md-12 col-sm-12 col-xs-12'> <div class='yourChatMsgContainer'><p class='chatMsg' >"+msg+"</p></div></div></div>")
+                    $('#chat').append("<div class='weui-flex '><div class='weui-flex__item'> <div class='yourChatMsgContainer'><p class='chatMsg' >"+msg+"</p></div></div></div>")
                 }
                 else{
-                    $('#chat').append("<div class='row '><div class='col-md-12 col-sm-12 col-xs-12'> <div class='othersChatMsgContainer'><p class='chatMsg' >"+msg+"</p></div></div></div>")
+                    $('#chat').append("<div class='weui-flex '><div class='weui-flex__item'> <div class='othersChatMsgContainer'><p class='chatMsg' >"+msg+"</p></div></div></div>")
                 }
             }
             var sendMsg = function(socket){
                  text = $('#text').val();
                  $('#text').val('');
                  if (text.length>200){
-                    alert('发送失败，请用词精炼')
+                    weui.alert('输入过长，请精炼用词', { title: '发送失败' });
                     return
                  }
                  if (text.length <= 0){
-                    alert('发送失败，是不是啥也没写？')
+                    weui.alert('是不是啥也没写？', { title: '发送失败' });
                     return
                  }
                  socket.emit('text', {msg: text});
             }
             $(document).ready(function(){
                 $('#dateStatusRow').css('display','none');
-                $('#haveDate').removeAttr('disabled');
+                $('#chatTab').css('display','block');
+                $('#dateTab').css('display','none');
+                $('#submitInform').click(function(){
+                    weui.form.validate('#form',function(error){
+                        if (!error){
+                           var name = $('#realName').val();
+                             var phone = $('#phone').val()
+                        socket.emit('date', {realName: name,phone:phone});
+                        $('#dateTab').css('display','none');
+                                $('#chatTab').css('display','block');
+                        dateFuncStatus=0
+                        }
+                        else{console.log(error)}
+                    })
+
+
+                })
+                $('#cancelSubmit').click(function(){
+                          $('#dateTab').css('display','none');
+                                $('#chatTab').css('display','block');
+                })
+                $('#menu').click(function(e){
+                   weui.actionSheet(
+                      [{label: '交换联系方式', onClick: function () {
+                            if(dateFuncStatus){
+                                $('#dateTab').css('display','block');
+                                $('#chatTab').css('display','none');
+                            }
+                            else
+                            {
+                               weui.alert('不能提交联系方式,是不是已经提交过？')
+                            }
+                        }}]
+                   );
+                })
+
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/randomchat');
                 socket.on('connect', function() {
                     socket.emit('joined', {});
@@ -175,42 +158,37 @@
                 socket.on('status', function(data) {
                     if(data.status=='ok'){
                         if(data.name =='B'){
-                            $('#status').html("<div class='alert alert-success' role='alert'>有人来了！你们可以开始聊天了</div>");
+                            $('#status').html("♥华理随机聊♥——<i class=\"weui-icon-success\"></i>有人来了！你们可以开始聊天了");
                         }
                         else{
-                            $('#status').html("<div class='alert alert-warning' role='alert' >请耐心等待随机配对....如长时间没有反应请<button class='btn btn-default' type='button' id='refresh' onclick=\"javascript:location.href='/randomchat/index?room={{room}}';\">刷新</button></div>");
+                            $('#status').html("♥华理随机聊♥——<i class=\"weui-icon-warn\"></i>请耐心等待随机配对....<br>如长时间没有反应请<strong>点此刷新</strong></button></div>");
                         }
                     }
                     else{
-                        alert(data.msg)
-                        location.href='/randomchat/index?room={{room}}';
+                        weui.alert(data.msg,function(){
+                            location.href='/randomchat/index?room={{room}}';
+                        });
+
                     }
 
                 });
                 socket.on('dateResult', function(data) {
-                    $('#dateStatusRow').css('display','block')
                     if(data.status=='ok'){
 
                         if('{{name}}'=='A'){
-
-                            $('#dateStatus').html(data.msg+'<br>'+data.B+'<br>HAVE FUN')
-                            $('#dateStatusContainer').attr('class','alert alert-success alert-dismissible fade in')
+                            weui.alert(data.msg+'<br>'+data.B+'<br>HAVE FUN',{ title: '交换成功' });                            $('#dateStatusContainer').attr('class','alert alert-success alert-dismissible fade in')
                         }
                         else{
-                            $('#dateStatus').html(data.msg+'<br>'+data.A+'<br>HAVE FUN')
-                            $('#dateStatusContainer').attr('class','alert alert-success alert-dismissible fade in')
+                            weui.alert(data.msg+'<br>'+data.A+'<br>HAVE FUN',{ title: '交换成功' });
 
                         }
                     }
                     if(data.status=='waiting'){
-                        $('#dateStatus').html(data.msg)
-                        $('#dateStatusContainer').attr('class','alert alert-warning alert-dismissible fade in')
+                        weui.alert(data.msg,{ title: '发送成功' });
                     }
                     if(data.status=='failed'){
-                        $("#haveDate").removeAttr('disabled');
-                        $('#dateStatus').html(data.msg)
-                        $('#dateStatusContainer').attr('class','alert alert-danger alert-dismissible fade in')
-
+                        dateFuncStatus = 1;
+                        weui.alert(data.msg,{ title: '发送失败' });
                     }
                 });
 
@@ -230,26 +208,14 @@
                 $('#haveDate').click(function(e) {
                     $('#myModal').modal()
                 });
-                $('#submitInform').click(function(e) {
-                    var name = $('#realName').val();
-                    var phone = $('#phone').val()
-                    var pattern=/(^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$)|(^0{0,1}1[3|4|5|6|7|8|9][0-9]{9}$)/;
-                    if(name.length>20){
-                        alert('名字过长')
-                        $('#phone').val('')
-                        return
-                    }
-                    if(!pattern.test(phone)) {
-                        alert('手机号格式不正确！')
-                        $('#phone').val('')
-                        return
-                    }
-                    socket.emit('date', {realName: name,phone:phone});
-                    $('#myModal').modal('hide')
-                    $('#haveDate').attr('disabled','disabled');
-                })
             });
--1
+
+
+
+
+
+
+
 
 
 

@@ -76,7 +76,7 @@ def date(message):
         ACount = chatRecord['A']['count']
         BCount = chatRecord['B']['count']
 
-        if ACount>20 and BCount>20 :
+        if ACount>10 and BCount>10 :
 
             if chatRecord[name]['detail'] == '':
                 chatRecord[name]['detail']={'realName':message['realName'],'phone':message['phone']}
@@ -94,7 +94,7 @@ def date(message):
         emit('dateResult', {'msg': u'现在就你自己，和谁交换联系方式？请耐心等待', 'status': 'failed'})
 
 
-    print chatRecord[name]['detail']
+    # print chatRecord[name]['detail']
 
 def makeRoomNumber():
     md5 = hashlib.md5()
