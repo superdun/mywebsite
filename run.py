@@ -195,6 +195,10 @@ def cowboy():
     return render_template('cowboy/cowboy.html')
 
 
+@app.route('/cowboy')
+def cowboy():
+    return render_template('cowboy/cowboy.html')
+
 @app.route('/face', methods=['GET', 'POST'])
 def face():
     if request.method == 'GET':
